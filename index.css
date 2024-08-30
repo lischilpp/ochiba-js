@@ -11,7 +11,7 @@ body {
 }
 
 article {
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 article section {
@@ -24,6 +24,11 @@ section h2 {
 
 section p {
     margin-bottom: 5px;
+}
+
+section ul li {
+    margin-left: 20px;
+    margin-top: 5px;
 }
 
 #main-area {

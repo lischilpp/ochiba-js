@@ -1,6 +1,3 @@
-
-
-
 Array.prototype.shuffle = function () {
     this.sort(() => .5 - Math.random());
 }
@@ -41,9 +38,7 @@ class OC {
         }
         this.elem = elem;
 
-
         this.prefixes = ['']
-
         if (typeof options !== 'undefined') {
             if ('enablePrefixes' in options && options.enablePrefixes) {
                 this.prefixes = ['', '-webkit-', '-moz-', '-o-']
@@ -54,7 +49,6 @@ class OC {
             this.init()
         } else {
             this.initLetters(true)
-
         }
     }
 

@@ -159,17 +159,32 @@ class OC {
     }
 
     animateLeaves(options) {
+        options = this.validateAnimationOptions(options);
+
+        for (let i = 0; i < this.leaves.length; i++) {
+            const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);
+            this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
+        }
+
+        if ('callback' in options) {
+            const timeToComplete = parseInt((options.delay + options.duration
+                + options.leafAnimation.delay + options.leafAnimation.duration) * 1000)
+            window.setTimeout(options.callback, timeToComplete, this.root);
+        }
+    }
+
+    validateAnimationOptions(options) {
         if (options == null) throw 'options are required for defining the animation'
-        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
+        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation';
         
         if ('timing' in options) options.timing = OCHelpers.hyphenToCamelCase(options.timing);
-        else options.timing = 'linear'
-        if (!(options.timing in OCTimingFunctions)) throw `timing "${options.timing}" is not a valid timing function`
+        else options.timing = 'linear';
+        if (!(options.timing in OCTimingFunctions)) throw `timing "${options.timing}" is not a valid timing function`;
         
         if ('order' in options) options.order = OCHelpers.hyphenToCamelCase(options.order);
-        else options.order = 'asc'
+        else options.order = 'asc';
 
-        if (!('duration' in options)) options.duration = 1
+        if (!('duration' in options)) options.duration = 1;
 
         const prefixes = this.getPrefixes(options);
         options.leafAnimation = new CSSAnimation(
@@ -182,16 +197,17 @@ class OC {
             prefixes);
         options.delay = ('delay' in options) ? options.delay : 0;
 
-        for (let i = 0; i < this.leaves.length; i++) {
-            const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);
-            this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-        }
+        return options;
+    }
 
-        if ('callback' in options) {
-            const timeToComplete = parseInt((options.delay + options.duration
-                + options.leafAnimation.delay + options.leafAnimation.duration) * 1000)
-            window.setTimeout(options.callback, timeToComplete, this.root);
+    getLeaveAnimationAsString(options) {
+        options = this.validateAnimationOptions(options);
+        var cssString = '';
+        for (var i = 0; i < this.leaves.length; i++) {
+            const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);
+            cssString += `#${this.root.id} .leaf:nth-child(${i + 1}) {${options.leafAnimation.toStringWithModifiedDelay(delay)}}`;
         }
+        return cssString;
     }
 }
 

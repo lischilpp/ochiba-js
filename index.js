@@ -54,7 +54,7 @@ function initCodeEditor() {
     let htmlCode = '';
     let cssCode = '';
     let jsCode = '';
-    let currentLang = 'js';
+    let selectedTab = 'js';
 
     function loadDemo(demo) {
         htmlCode = demo.htmlCode;
@@ -82,7 +82,7 @@ function initCodeEditor() {
         tabs.forEach(t => t.classList.remove('active'));
         const tab = Array.from(tabs).find(t => t.dataset.lang === lang);
         tab.classList.add('active');
-        currentLang = lang;
+        selectedTab = lang;
         codeEditorElem.value = lang === 'html' ? htmlCode : lang === 'css' ? cssCode : jsCode;
     }
 
@@ -95,9 +95,9 @@ function initCodeEditor() {
 
     // automatically update preview when changing code
     codeEditorElem.addEventListener('input', () => {
-        if (currentLang === 'html') htmlCode = codeEditorElem.value;
-        if (currentLang === 'css') cssCode = codeEditorElem.value;
-        if (currentLang === 'js') jsCode = codeEditorElem.value;
+        if (selectedTab === 'html') htmlCode = codeEditorElem.value;
+        if (selectedTab === 'css') cssCode = codeEditorElem.value;
+        if (selectedTab === 'js') jsCode = codeEditorElem.value;
         updatePreview();
     });
 

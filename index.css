@@ -72,6 +72,14 @@ section p {
     user-select: none;
 }
 
+#load-demo-buttons li:hover {
+    background-color: #1e1e1e;
+}
+
+#load-demo-buttons li:not(:first-child) {
+    border-top: 1px solid #858585;
+}
+
 .leaf {
     opacity: 0;
 }
@@ -144,6 +152,7 @@ header {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     overflow: hidden;
+    background-color: #1e1e1e;
 }
 
 #preview-frame {

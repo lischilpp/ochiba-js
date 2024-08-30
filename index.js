@@ -18,7 +18,7 @@ function animateHeader() {
                         duration: 1,
                         delay: 0,
                         timing: 'ease',
-                        keyframes: 'headline'
+                        keyframes: 'headline',
                     },
                     duration: 1,
                 }
@@ -34,7 +34,7 @@ function animateHeader() {
                     duration: 1,
                     delay: 0,
                     timing: 'ease',
-                    keyframes: 'sub-headline'
+                    keyframes: 'sub-headline',
                 },
                 duration: 1
             }

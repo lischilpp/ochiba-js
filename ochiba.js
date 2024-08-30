@@ -1,4 +1,4 @@
-OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2
+OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2, extended by me
   // no easing, no acceleration
   linear: t => t,
   // accelerating from zero velocity
@@ -24,7 +24,9 @@ OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/165
   // decelerating to zero velocity
   easeOutQuint: t => 1+(--t)*t*t*t*t,
   // acceleration until halfway, then deceleration 
-  easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t
+  easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t,
+  // CSS "ease" approximation (smooth acceleration and deceleration)
+  ease: t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
 }
 
 class OCHelpers {
@@ -34,20 +36,24 @@ class OCHelpers {
     static shuffleArray(array) {
         array.sort(() => .5 - Math.random());
     }
+    static getDelayForTiming(duration, timing, progres) {
+        return duration - OCTimingFunctions[timing](1 - progres) * duration;
+    }
+    static hyphenToCamelCase(str) {
+        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+    }
 }
 
 class CSSAnimation {
-    constructor(duration, timing, delay, keyframes, prefixes) {
-        if (duration == null) throw 'duration is required for CSSAnimation'
-        if (timing == null) throw 'timing is required for CSSAnimation'
-        if (delay == null) delay = 0
+    constructor(duration=1, timing='ease', delay=0, keyframes, iterations=1, fillMode='forwards', prefixes=['']) {
         if (keyframes == null) throw 'keyframes is required for CSSAnimation'
-        if (prefixes == null) prefixes = ['']
         this.keyframes = keyframes;
         this.duration = duration;
         this.delay = delay;
         this.timing = timing;
         this.prefixes = prefixes;
+        this.iterations = iterations;
+        this.fillMode = fillMode;
     }
 
     toString() {
@@ -55,9 +61,13 @@ class CSSAnimation {
     }
 
     toStringWithModifiedDelay(delay) {
+        console.log(this.fillMode)
+        console.log(this.getPrefixedStyle('animation',
+            `${this.keyframes} ${this.duration}s ${this.timing} ${delay}s ${this.iterations}`) +
+            this.getPrefixedStyle('animation-fill-mode', this.fillMode))
         return this.getPrefixedStyle('animation',
-            this.duration + 's ' + delay + 's ' + this.timing + ' ' + this.keyframes
-         ) + this.getPrefixedStyle('animation-fill-mode', 'forwards');
+            `${this.keyframes} ${this.duration}s ${this.timing} ${delay}s ${this.iterations}`) +
+            this.getPrefixedStyle('animation-fill-mode', this.fillMode);
     }
 
     getPrefixedStyle(prop, val) {
@@ -65,9 +75,46 @@ class CSSAnimation {
     }
 }
 
-
-class OCLeafOrder {
-    
+const OCLeafOrder = {
+    asc: function(options, i, leaveCount) {
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, i / leaveCount);
+    },
+    desc: function(options, i, leaveCount) {
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (leaveCount - i) / leaveCount);
+    },
+    midOut: function(options, i, leaveCount) {
+        const mid = Math.floor(leaveCount * 0.5);
+        if (i >= mid) {
+            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (i - mid) / (leaveCount - mid));
+        } else {
+            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (mid - i) / mid);
+        }
+    },
+    outMid: function(options, i, leaveCount) {
+        const mid = Math.floor(leaveCount * 0.5);
+        if (i < mid) {
+            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, i / mid);
+        } else {
+            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (leaveCount - i) / (leaveCount - mid));
+        }
+    },
+    random: function(options, i, leaveCount) {
+        if (i == 0) {
+            this.shuffled = OCHelpers.intRange(0, leaveCount - 1);
+            OCHelpers.shuffleArray(this.shuffled);
+        }
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, this.shuffled[i] / leaveCount);
+    },
+    segmentsAsc: function(options, i, leaveCount) {
+        const interval = Math.floor(leaveCount * 0.25);
+        const index = i % interval;
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, index / interval);
+    },
+    segmentsDesc: function(options, i, leaveCount) {
+        const interval = Math.floor(leaveCount * 0.25);
+        const index = i % interval;
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (interval - index) / interval);
+    }
 }
 
 class OC {
@@ -117,8 +164,15 @@ class OC {
     animateLeaves(options) {
         if (options == null) throw 'options are required for defining the animation'
         if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
-        if (!('timing' in options)) throw 'timing is required for defining the animation'
+        
+        if ('timing' in options) options.timing = OCHelpers.hyphenToCamelCase(options.timing);
+        else options.timing = 'linear'
         if (!(options.timing in OCTimingFunctions)) throw `timing "${options.timing}" is not a valid timing function`
+        
+        if ('order' in options) options.order = OCHelpers.hyphenToCamelCase(options.order);
+        else options.order = 'asc'
+
+        if (!('duration' in options)) options.duration = 1
 
         const prefixes = this.getPrefixes(options);
         options.leafAnimation = new CSSAnimation(
@@ -126,78 +180,21 @@ class OC {
             options.leafAnimation.timing,
             options.leafAnimation.delay,
             options.leafAnimation.keyframes,
+            options.leafAnimation.iterations,
+            options.leafAnimation.fillMode,
             prefixes);
         options.delay = ('delay' in options) ? options.delay : 0;
-        switch (options.order) {
-            case 'asc':
-                for (var i = 0; i < this.leaves.length; i++) {
-                    var delay = options.delay + this.getDelayForTiming(options.duration, options.timing, i / this.leaves.length)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                break;
-            case 'desc':
-                var duration = options.duration / this.leaves.length;
-                for (var i = this.leaves.length - 1; i >= 0; i--) {
-                    const delay = options.delay + this.getDelayForTiming(options.duration, options.timing, (this.leaves.length - i) / this.leaves.length)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                break;
-            case 'mid-out':
-                var duration = Math.floor(options.duration / (this.leaves.length * 0.5));
-                var mid = this.leaves.length * 0.5;
-                if (mid % 1 == 0) {
-                    var toLeft = mid - 1;
-                    var toRight = mid;
-                } else {
-                    var toLeft = mid - 0.5;
-                    var toRight = mid - 0.5;
-                }
-                for (var i = toRight; i < this.leaves.length; i++) {
-                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (i - toRight) / toRight)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                for (var i = toLeft; i >= 0; i--) {
-                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (toLeft - i) / toLeft)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                break;
-            case 'out-mid':
-                var duration = Math.floor(options.duration / (this.leaves.length * 0.5));
-                var mid = this.leaves.length * 0.5;
-                if (mid % 1 == 0) {
-                    var toLeft = mid - 1;
-                    var toRight = mid;
-                } else {
-                    var toLeft = mid - 0.5;
-                    var toRight = mid - 0.5;
-                }
-                for (var i = 0; i <= toRight; i++) {
-                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, i / toRight)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                for (var i = this.leaves.length - 1; i >= toLeft; i--) {
-                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (this.leaves.length - 1 - i) / toLeft)
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                break;
-            case 'random':
-                var order = OCHelpers.intRange(0, this.leaves.length - 1);
-                shuffleArray(order);
-                for (var i = 0; i < this.leaves.length; i++) {
-                    var delay = this.getDelayForTiming(options.timing, i / this.leaves.length, options.duration);
-                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
-                }
-                break;
+
+        for (let i = 0; i < this.leaves.length; i++) {
+            const delay = OCLeafOrder[options.order](options, i, this.leaves.length);
+            this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
         }
+
         if ('callback' in options) {
             const timeToComplete = parseInt((options.delay + options.duration
                 + options.leafAnimation.delay + options.leafAnimation.duration) * 1000)
             window.setTimeout(options.callback, timeToComplete, this.root);
         }
-    }
-    // timing, progres, duration
-    getDelayForTiming = function (duration, timing, progres) {
-        return duration - OCTimingFunctions[timing](1 - progres) * duration;
     }
 }
 

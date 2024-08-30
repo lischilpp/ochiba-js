@@ -33,14 +33,14 @@ h1 .leaf { /* make all leaves invisible first */
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-order: 'asc',
-timing: 'linear',
-leafAnimation: {
     duration: 1,
-    timing: 'ease',
-    keyframes: 'wave-from-left'
-},
-duration: 1
+    order: 'asc',
+    timing: 'linear',
+    leafAnimation: {
+        duration: 1,
+        timing: 'ease',
+        keyframes: 'wave-from-left'
+    },
 });
 `
     },
@@ -49,7 +49,7 @@ duration: 1
         htmlCode:
 `<html>
     <body>
-        <h1 id="h1">OchibaJS is awesome!</h1>
+        <h1 id="h1">You can use OchibaJS on any element that has child nodes or text</h1>
         <script src="ochiba.js"></script>
     </body>
 </html>
@@ -61,6 +61,7 @@ duration: 1
     font-family: Tahoma, sans-serif;
     text-align: center;
     margin-top: 80px;
+    font-size: 1.5em;
 }
 h1 .leaf { /* make all leaves invisible first */
     opacity: 0;
@@ -74,14 +75,14 @@ h1 .leaf { /* make all leaves invisible first */
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-order: 'mid-out',
-timing: 'linear',
-leafAnimation: {
     duration: 1,
-    timing: 'ease',
-    keyframes: 'scale-in'
-},
-duration: 1
+    order: 'mid-out',
+    timing: 'linear',
+    leafAnimation: {
+        duration: 1,
+        timing: 'ease',
+        keyframes: 'scale-in'
+    },
 });
 `
     },
@@ -95,9 +96,7 @@ duration: 1
     </body>
 </html>
 `,
-
         cssCode:
-
 `h1 {
     font-family: Tahoma, sans-serif;
     text-align: center;
@@ -121,16 +120,16 @@ h1 .leaf {
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-order: 'out-mid',
-timing: 'ease-out-cubic',
-leafAnimation: {
     duration: 1,
-    timing: 'ease',
-    keyframes: 'shake-it',
-    iterations: 'infinite',
-    fillMode: 'forwards'
-},
-duration: 1
+    order: 'out-mid',
+    timing: 'ease-out-cubic',
+    leafAnimation: {
+        duration: 1,
+        timing: 'ease',
+        keyframes: 'shake-it',
+        iterations: 'infinite',
+        fillMode: 'forwards'
+    },
 });
 `
     },
@@ -139,12 +138,13 @@ duration: 1
         htmlCode:
 `<html>
     <body>
+        <h2>Grocery List</h2>
         <ul id="list">
-            <li>Item 1</li>
-            <li>Item 2</li>
-            <li>Item 3</li>
-            <li>Item 4</li>
-            <li>Item 5</li>
+            <li>Apples</li>
+            <li>Oranges</li>
+            <li>Bananas</li>
+            <li>Strawberries</li>
+            <li>Blueberries</li>
         </ul>
         <script src="ochiba.js"></script>
     </body>
@@ -153,13 +153,18 @@ duration: 1
 
         cssCode: 
 `
+body {
+    font-family: Tahoma, sans-serif;
+}
 .leaf { /* make all leaves invisible first */
     opacity: 0;
 }
-ul li {
+h2, li {
     color: #fff;
-    font-family: Tahoma, sans-serif;
-    font-size: 1.5em;
+    font-size: 1.2em;
+}
+h2 {
+    margin-left: 10px;
 }
 @keyframes slide-in-from-left {
     0%   { transform: translateX(-100px); opacity: 0; }
@@ -169,15 +174,15 @@ ul li {
 `const elem = document.getElementById('list');
 const oc = new OC(elem);
 oc.animateLeaves({
+    duration: 1,
     order: 'asc',
     timing: 'linear',
-    duration: 1,
+    fillMode: 'forwards',
     leafAnimation: {
         duration: 0.5,
         timing: 'ease',
         keyframes: 'slide-in-from-left'
     },
-    fillMode: 'forwards'
 });
     `
 }

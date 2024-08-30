@@ -9,7 +9,7 @@ function animateHeader() {
     const seq = new OCSequence([
         [
             {
-                elem: document.getElementById('headline'),
+                root: document.getElementById('headline'),
                 animationProps: {
                     delay: 0.1,
                     order: 'linear',
@@ -25,7 +25,7 @@ function animateHeader() {
             }
         ],
         [{
-            elem: document.getElementById('sub-headline'),
+            root: document.getElementById('sub-headline'),
             animationProps: {
                 delay: 0,
                 order: 'linear',

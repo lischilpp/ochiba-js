@@ -1,7 +1,3 @@
-Array.prototype.shuffle = function () {
-    this.sort(() => .5 - Math.random());
-}
-
 OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2
   // no easing, no acceleration
   linear: t => t,
@@ -31,38 +27,77 @@ OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/165
   easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t
 }
 
+class OCHelpers {
+    static intRange(start, end) {
+        return Array.from({length: end - start + 1}, (_, i) => start + i);
+    }
+    static shuffleArray(array) {
+        array.sort(() => .5 - Math.random());
+    }
+}
+
+class CSSAnimation {
+    constructor(duration, timing, delay, keyframes) {
+        if (duration == null) throw 'duration is required for CSSAnimation'
+        if (timing == null) throw 'timing is required for CSSAnimation'
+        if (delay == null) delay = 0
+        if (keyframes == null) throw 'keyframes is required for CSSAnimation'
+        this.keyframes = keyframes;
+        this.duration = duration;
+        this.delay = delay;
+        this.timing = timing;
+    }
+
+    toString() {
+        const delay = (animation.delay + delay) || delay|| 0;
+
+        return this.getPrefixedStyle('animation',
+            animation.duration + 's ' + delay + 's ' + animation.timing + ' ' + animation.keyframes
+         ) + this.getPrefixedStyle('animation-fill-mode', 'forwards');
+    }
+
+    getPrefixedStyle(prop, val) {
+        var style = '';
+        for (var i = 0; i < this.prefixes.length; i++)
+            style += ';' + this.prefixes[i] + prop + ':' + val;
+        return style;
+    }
+}
+
 class OC {
-    constructor(elem, options) {
-        if (elem == null) {
-            throw 'the given element does not exist'
-        }
-        this.elem = elem;
+    constructor(root, options) {
+        if (root == null) throw 'the given element does not exist'
+        this.root = root;
 
-        this.prefixes = ['']
-        if (typeof options !== 'undefined') {
-            if ('enablePrefixes' in options && options.enablePrefixes) {
-                this.prefixes = ['', '-webkit-', '-moz-', '-o-']
-            }
-        }
+        if (options == null) throw 'options are required for defining the animation'
+        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
 
-        if (this.elem.children.length != 0) {
-            this.init()
+        this.options.leafAnimation = new CSSAnimation(
+            this.options.leafAnimation.duration,
+            this.options.leafAnimation.timing,
+            this.options.leafAnimation.delay,
+            this.options.leafAnimation.keyframes);
+
+        this.initPrefixes(options);
+
+        if (this.root.children.length != 0) {
+            this.initChildElements();
         } else {
-            this.initLetters(true)
+            this.initLetters(true);
         }
     }
 
-    init() {
-        this.leaves = []
-        for (const child of this.elem.children) {
-            child.classList.add('leaf')
-            this.leaves.push(child)
+    // ### initializing leaves ###
+
+    initChildElements() {
+        for (const child of this.root.children) {
+            child.classList.add('leaf');
+            this.leaves.push(child);
         }
     }
-
     initLetters(fixedSize) {
         fixedSize = (fixedSize) ? 'display: inline-block' : '';
-        var letters = this.elem.innerHTML.split('');
+        var letters = this.root.innerHTML.split('');
         var htmlString = '';
         for (var i = 0; i < letters.length; i++) {
             var letter = letters[i];
@@ -73,14 +108,16 @@ class OC {
             }
             htmlString += '<span ' + isLeaf + ' style="' + fixedSize + '">' + letter + '</span>';
         }
-        this.elem.innerHTML = htmlString;
-        this.leaves = this.elem.getElementsByClassName('leaf');
+        this.root.innerHTML = htmlString;
+        this.leaves = this.root.getElementsByClassName('leaf');
     }
 
-
-    resetLeafAnimations() {
-        for (var i = 0; i < this.leaves.length; i++) {
-            this.addPrefixedStyle(this.leaves[i], 'animation', 'none');
+    initPrefixes(options) {
+        this.prefixes = [''];
+        if (typeof options !== 'undefined') {
+            if ('enablePrefixes' in options && options.enablePrefixes) {
+                this.prefixes = ['', '-webkit-', '-moz-', '-o-'];
+            }
         }
     }
 
@@ -148,8 +185,8 @@ class OC {
                 }
                 break;
             case 'random':
-                var order = this.intRange(0, this.leaves.length - 1);
-                order.shuffle();
+                var order = OCHelpers.intRange(0, this.leaves.length - 1);
+                shuffleArray(order);
                 for (var i = 0; i < this.leaves.length; i++) {
                     var delay = this.getDelayForTiming(options.timing, i / this.leaves.length, options.duration);
                     this.leaves[order[i]].style.cssText += this.getAnimatedLeafString(options.leafAnimation, options.delay + delay);
@@ -159,19 +196,12 @@ class OC {
         if (typeof options.callback != 'undefined') {
             const timeToComplete = parseInt((options.delay + options.duration
                 + options.leafAnimation.delay + options.leafAnimation.duration) * 1000)
-            window.setTimeout(options.callback, timeToComplete, this.elem);
+            window.setTimeout(options.callback, timeToComplete, this.root);
         }
     }
 
     getAnimationAsHTMLString() {
-        return this.elem.innerHTML;
-    }
-
-    getPrefixedStyle(prop, val) {
-        var style = '';
-        for (var i = 0; i < this.prefixes.length; i++)
-            style += ';' + this.prefixes[i] + prop + ':' + val;
-        return style;
+        return this.root.innerHTML;
     }
 
     addPrefixedStyle(elem, prop, val) {
@@ -179,21 +209,10 @@ class OC {
             elem.style[this.prefixes[i] + prop] = val;
     }
 
-    getAnimationString(animation) {
-        return animation.duration + 's ' + (animation.delay || 0) + 's ' + animation.timing + ' ' + animation.keyframes;
-    }
-
+    
 
     getDelayForTiming = function (timing, progres, time) {
         return time - OCTimingFunctions[timing](1 - progres) * time;
-    }
-
-    intRange = function (start, end) {
-        var arr = [];
-        for (var i = start; i <= end; i++) {
-            arr.push(i);
-        }
-        return arr;
     }
 }
 
@@ -201,7 +220,7 @@ class OCSequence {
     constructor(seqEntries) {
         for (const seqEntry of seqEntries) {
             for (const entry of seqEntry) {
-                entry.elem = new OC(entry.elem)
+                entry.root = new OC(entry.root)
             }
         }
         this.seqEntries = seqEntries
@@ -214,7 +233,7 @@ class OCSequence {
             let maxLeafAnimationDelay = 0
             let maxLeafAnimationDuration = 0
             for (const entry of seqEntry) {
-                entry.elem.animateLeaves({
+                entry.root.animateLeaves({
                     delay: total_delay + entry.animationProps.delay,
                     order: entry.animationProps.order,
                     timing: entry.animationProps.timing,

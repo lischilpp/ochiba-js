@@ -2,8 +2,7 @@ const ochibaDemos = [
     {
         name: 'Wave from left',
         htmlCode:
-`
-<html>
+`<html>
     <body>
         <h1 id="h1">OchibaJS is awesome!</h1>
         <script src="ochiba.js"></script>

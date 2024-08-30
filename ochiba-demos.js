@@ -125,7 +125,7 @@ oc.animateLeaves({
     timing: 'ease-out-cubic',
     leafAnimation: {
         duration: 1,
-        timing: 'ease',
+        timing: 'linear',
         keyframes: 'shake-it',
         iterations: 'infinite',
         fillMode: 'forwards'

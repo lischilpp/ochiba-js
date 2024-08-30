@@ -71,11 +71,6 @@ h1 .leaf { /* make all leaves invisible first */
 }
 
 @keyframes example1 {
-    0%   { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-@keyframes example1 {
     0%   { transform: translateY(50px); opacity: 0; }
     20%  { transform: translateY(-45px); opacity: 0.2; }
     40%  { transform: translateY(35px); opacity: 0.4; }
@@ -101,13 +96,13 @@ h1 .leaf { /* make all leaves invisible first */
 const oc = new OC(elem);
 oc.animateLeaves({
 delay: 0,
-order: 'random',
+order: 'linear',
 timing: 'linear',
 leafAnimation: {
     duration: 1,
     delay: 0,
     timing: 'ease',
-    keyframes: 'example3'
+    keyframes: 'example1'
 },
 duration: 1
 });

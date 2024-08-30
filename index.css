@@ -26,6 +26,11 @@ section p {
     margin-bottom: 5px;
 }
 
+#main-area {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 @keyframes fadeIn {
     from {opacity: 0}
     to   {opacity: 1}
@@ -45,6 +50,25 @@ section p {
 @keyframes sub-headline {
     from { transform: scale(0); }
     to   { transform: scale(1); opacity: 1 }
+}
+
+#load-example-buttons h2 {
+    color: #fff;
+    padding: 10px 20px;
+    user-select: none;
+}
+
+#load-example-buttons ul {
+    list-style-type: none;
+    justify-content: left;
+    margin-bottom: 10px;
+}
+
+#load-example-buttons li {
+    padding: 10px 20px;
+    background-color: #2d2d2d;
+    color: #858585;
+    cursor: pointer;
 }
 
 .leaf {

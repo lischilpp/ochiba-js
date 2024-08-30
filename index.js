@@ -12,7 +12,7 @@ function animateHeader() {
                 root: document.getElementById('headline'),
                 animationProps: {
                     delay: 0.1,
-                    order: 'linear',
+                    order: 'asc',
                     timing: 'linear',
                     leafAnimation: {
                         duration: 1,
@@ -28,7 +28,7 @@ function animateHeader() {
             root: document.getElementById('sub-headline'),
             animationProps: {
                 delay: 0,
-                order: 'linear',
+                order: 'asc',
                 timing: 'linear',
                 leafAnimation: {
                     duration: 1,

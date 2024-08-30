@@ -37,48 +37,38 @@ class OCHelpers {
 }
 
 class CSSAnimation {
-    constructor(duration, timing, delay, keyframes) {
+    constructor(duration, timing, delay, keyframes, prefixes) {
         if (duration == null) throw 'duration is required for CSSAnimation'
         if (timing == null) throw 'timing is required for CSSAnimation'
         if (delay == null) delay = 0
         if (keyframes == null) throw 'keyframes is required for CSSAnimation'
+        if (prefixes == null) prefixes = ['']
         this.keyframes = keyframes;
         this.duration = duration;
         this.delay = delay;
         this.timing = timing;
+        this.prefixes = prefixes;
     }
 
     toString() {
-        const delay = (animation.delay + delay) || delay|| 0;
+        return this.toStringWithModifiedDelay(this.delay);
+    }
 
+    toStringWithModifiedDelay(delay) {
         return this.getPrefixedStyle('animation',
-            animation.duration + 's ' + delay + 's ' + animation.timing + ' ' + animation.keyframes
+            this.duration + 's ' + delay + 's ' + this.timing + ' ' + this.keyframes
          ) + this.getPrefixedStyle('animation-fill-mode', 'forwards');
     }
 
     getPrefixedStyle(prop, val) {
-        var style = '';
-        for (var i = 0; i < this.prefixes.length; i++)
-            style += ';' + this.prefixes[i] + prop + ':' + val;
-        return style;
+        return this.prefixes.map(prefix => `;${prefix}${prop}:${val}`).join('');
     }
 }
 
 class OC {
-    constructor(root, options) {
+    constructor(root) {
         if (root == null) throw 'the given element does not exist'
         this.root = root;
-
-        if (options == null) throw 'options are required for defining the animation'
-        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
-
-        this.options.leafAnimation = new CSSAnimation(
-            this.options.leafAnimation.duration,
-            this.options.leafAnimation.timing,
-            this.options.leafAnimation.delay,
-            this.options.leafAnimation.keyframes);
-
-        this.initPrefixes(options);
 
         if (this.root.children.length != 0) {
             this.initChildElements();
@@ -112,38 +102,37 @@ class OC {
         this.leaves = this.root.getElementsByClassName('leaf');
     }
 
-    initPrefixes(options) {
-        this.prefixes = [''];
-        if (typeof options !== 'undefined') {
-            if ('enablePrefixes' in options && options.enablePrefixes) {
-                this.prefixes = ['', '-webkit-', '-moz-', '-o-'];
-            }
+    getPrefixes(options) {
+        if (typeof options !== 'undefined' && 'enablePrefixes' in options && options.enablePrefixes) {
+            return ['', '-webkit-', '-moz-', '-o-'];
         }
-    }
-
-    getAnimatedLeafString(animation, delay) {
-        return this.getPrefixedStyle('animation', this.getAnimationString({
-            duration: animation.duration,
-            delay: (animation.delay + delay) || delay,
-            timing: animation.timing,
-            keyframes: animation.keyframes
-        })) + this.getPrefixedStyle('animation-fill-mode', 'forwards');
+        return [''];
     }
 
     animateLeaves(options) {
-        options.delay = (typeof options.delay != 'undefined') ? options.delay : 0;
+        if (options == null) throw 'options are required for defining the animation'
+        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
+
+        const prefixes = this.getPrefixes(options);
+        options.leafAnimation = new CSSAnimation(
+            options.leafAnimation.duration,
+            options.leafAnimation.timing,
+            options.leafAnimation.delay,
+            options.leafAnimation.keyframes,
+            prefixes);
+        options.delay = ('delay' in options) ? options.delay : 0;
         switch (options.order) {
-            case 'linear':
+            case 'asc':
                 for (var i = 0; i < this.leaves.length; i++) {
-                    var delay = options.delay + this.getDelayForTiming(options.timing, i / this.leaves.length, options.duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay)
+                    var delay = options.delay + this.getDelayForTiming(options.duration, options.timing, i / this.leaves.length)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 break;
-            case 'linear-reverse':
+            case 'desc':
                 var duration = options.duration / this.leaves.length;
                 for (var i = this.leaves.length - 1; i >= 0; i--) {
-                    const delay = options.delay + this.getDelayForTiming(options.timing, (this.leaves.length - i) / this.leaves.length, options.duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay);
+                    const delay = options.delay + this.getDelayForTiming(options.duration, options.timing, (this.leaves.length - i) / this.leaves.length)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 break;
             case 'mid-out':
@@ -157,12 +146,12 @@ class OC {
                     var toRight = mid - 0.5;
                 }
                 for (var i = toRight; i < this.leaves.length; i++) {
-                    const delay = options.delay + this.getDelayForTiming(options.timing, (i - toRight) / toRight, options.duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay);
+                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (i - toRight) / toRight)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 for (var i = toLeft; i >= 0; i--) {
-                    const delay = options.delay + this.getDelayForTiming(options.timing, (toLeft - i) / toLeft, options.duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay);
+                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (toLeft - i) / toLeft)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 break;
             case 'out-mid':
@@ -176,12 +165,12 @@ class OC {
                     var toRight = mid - 0.5;
                 }
                 for (var i = 0; i <= toRight; i++) {
-                    const delay = options.delay + this.getDelayForTiming(options.timing, i / toRight, duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay);
+                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, i / toRight)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 for (var i = this.leaves.length - 1; i >= toLeft; i--) {
-                    const delay = options.delay + this.getDelayForTiming(options.timing, (this.leaves.length - 1 - i) / toLeft, duration)
-                    this.leaves[i].style.cssText += this.getAnimatedLeafString(options.leafAnimation, delay);
+                    const delay = options.delay + this.getDelayForTiming(duration, options.timing, (this.leaves.length - 1 - i) / toLeft)
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 break;
             case 'random':
@@ -189,30 +178,19 @@ class OC {
                 shuffleArray(order);
                 for (var i = 0; i < this.leaves.length; i++) {
                     var delay = this.getDelayForTiming(options.timing, i / this.leaves.length, options.duration);
-                    this.leaves[order[i]].style.cssText += this.getAnimatedLeafString(options.leafAnimation, options.delay + delay);
+                    this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
                 }
                 break;
         }
-        if (typeof options.callback != 'undefined') {
+        if ('callback' in options) {
             const timeToComplete = parseInt((options.delay + options.duration
                 + options.leafAnimation.delay + options.leafAnimation.duration) * 1000)
             window.setTimeout(options.callback, timeToComplete, this.root);
         }
     }
-
-    getAnimationAsHTMLString() {
-        return this.root.innerHTML;
-    }
-
-    addPrefixedStyle(elem, prop, val) {
-        for (var i = 0; i < this.prefixes.length; i++)
-            elem.style[this.prefixes[i] + prop] = val;
-    }
-
-    
-
-    getDelayForTiming = function (timing, progres, time) {
-        return time - OCTimingFunctions[timing](1 - progres) * time;
+    // timing, progres, duration
+    getDelayForTiming = function (duration, timing, progres) {
+        return duration - OCTimingFunctions[timing](1 - progres) * duration;
     }
 }
 

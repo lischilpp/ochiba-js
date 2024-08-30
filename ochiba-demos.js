@@ -34,7 +34,7 @@ h1 .leaf { /* make all leaves invisible first */
 const oc = new OC(elem);
 oc.animateLeaves({
 delay: 0,
-order: 'linear',
+order: 'asc',
 timing: 'linear',
 leafAnimation: {
     duration: 1,

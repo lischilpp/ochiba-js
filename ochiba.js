@@ -65,6 +65,11 @@ class CSSAnimation {
     }
 }
 
+
+class OCLeafOrder {
+    
+}
+
 class OC {
     constructor(root) {
         if (root == null) throw 'the given element does not exist'
@@ -112,6 +117,8 @@ class OC {
     animateLeaves(options) {
         if (options == null) throw 'options are required for defining the animation'
         if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation'
+        if (!('timing' in options)) throw 'timing is required for defining the animation'
+        if (!(options.timing in OCTimingFunctions)) throw `timing "${options.timing}" is not a valid timing function`
 
         const prefixes = this.getPrefixes(options);
         options.leafAnimation = new CSSAnimation(

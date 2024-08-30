@@ -38,21 +38,53 @@ order: 'asc',
 timing: 'linear',
 leafAnimation: {
     duration: 1,
-    delay: 0,
     timing: 'ease',
     keyframes: 'wave-from-left'
 },
 duration: 1
 });
 `
-    }
-]
+    },
+    {
+        name: 'Scale in',
+        htmlCode:
+`<html>
+    <body>
+        <h1 id="h1">OchibaJS is awesome!</h1>
+        <script src="ochiba.js"></script>
+    </body>
+</html>
+`,
 
-/*
-@keyframes example3 {
-    0%   { transform: scale(16) scaleY(0); color: brown; opacity: 0; }
-    50%   { transform: scale(1) scaleY(2); color: brown; opacity: 0.5; }
-    80%   { transform: scale(1); color: brown; opacity: 0.5; }
+        cssCode:
+`h1 {
+    color: black;
+    font-family: Tahoma, sans-serif;
+    text-align: center;
+    margin-top: 80px;
+}
+h1 .leaf { /* make all leaves invisible first */
+    opacity: 0;
+}
+@keyframes scale-in {
+    0%   { transform: scale(16); color: brown; opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
-*/
+`,
+        jsCode:
+`const elem = document.getElementById('h1');
+const oc = new OC(elem);
+oc.animateLeaves({
+delay: 0,
+order: 'out-mid',
+timing: 'linear',
+leafAnimation: {
+    duration: 1,
+    timing: 'ease',
+    keyframes: 'scale-in'
+},
+duration: 1
+});
+`
+    }
+];

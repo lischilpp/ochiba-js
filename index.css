@@ -52,6 +52,31 @@ section p {
     to   { transform: scale(1); opacity: 1 }
 }
 
+.social-button {
+    display: inline-block;
+    background-color: #0077b5;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    top: 20px;
+    right: 50px;
+}
+
+.github-button {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.github-button:hover {
+    background-color: #e0e0e0;
+}
+
 #load-demo-buttons h2 {
     color: #fff;
     padding: 10px 20px;

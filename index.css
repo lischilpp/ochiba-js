@@ -52,23 +52,24 @@ section p {
     to   { transform: scale(1); opacity: 1 }
 }
 
-#load-example-buttons h2 {
+#load-demo-buttons h2 {
     color: #fff;
     padding: 10px 20px;
     user-select: none;
 }
 
-#load-example-buttons ul {
+#load-demo-buttons ul {
     list-style-type: none;
     justify-content: left;
     margin-bottom: 10px;
 }
 
-#load-example-buttons li {
+#load-demo-buttons li {
     padding: 10px 20px;
     background-color: #2d2d2d;
     color: #858585;
     cursor: pointer;
+    user-select: none;
 }
 
 .leaf {
@@ -98,6 +99,7 @@ header {
     background-color: #1e1e1e;
     color: #858585;
     cursor: pointer;
+    user-select: none;
 }
 
 #tabs li.active {
@@ -120,6 +122,7 @@ header {
     font-size: 14px;
     line-height: 1.5;
     resize: none;
+    outline: none;
     color: #d4d4d4;
     background-color: #1e1e1e;
     border-bottom-right-radius: 5px;

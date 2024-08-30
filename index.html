@@ -6,7 +6,6 @@
     <title>Code Editor with Preview</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="index.css" />
-    <script src="ochiba.js"></script>
 </head>
 <body>
     <header>
@@ -22,16 +21,9 @@
             </ul>
             <div class="editor-container">
                 <textarea id="code-editor" spellcheck="false"></textarea>
-                <div id="load-example-buttons">
-                    <h2>Load Example</h2>
-                    <ul>
-                        <li data-example="fade-in">Fade In</li>
-                        <li data-example="slide-in">Slide In</li>
-                        <li data-example="bounce">Bounce</li>
-                        <li data-example="rotate">Rotate</li>
-                        <li data-example="scale">Scale</li>
-                        <li data-example="split-text">Split Text</li>
-                    </ul>
+                <div id="load-demo-buttons">
+                    <h2>Load Demo</h2>
+                    <ul id="demo-list"></ul>
                 </div>
             </div>
             <button id="run-button">Run Code &#9654;</button>
@@ -53,6 +45,8 @@
             
         </article>
     </main>
+    <script src="ochiba.js"></script>
+    <script src="ochiba-demos.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

@@ -61,10 +61,6 @@ class CSSAnimation {
     }
 
     toStringWithModifiedDelay(delay) {
-        console.log(this.fillMode)
-        console.log(this.getPrefixedStyle('animation',
-            `${this.keyframes} ${this.duration}s ${this.timing} ${delay}s ${this.iterations}`) +
-            this.getPrefixedStyle('animation-fill-mode', this.fillMode))
         return this.getPrefixedStyle('animation',
             `${this.keyframes} ${this.duration}s ${this.timing} ${delay}s ${this.iterations}`) +
             this.getPrefixedStyle('animation-fill-mode', this.fillMode);
@@ -121,6 +117,7 @@ class OC {
     constructor(root) {
         if (root == null) throw 'the given element does not exist'
         this.root = root;
+        this.leaves = [];
 
         if (this.root.children.length != 0) {
             this.initChildElements();
@@ -186,7 +183,7 @@ class OC {
         options.delay = ('delay' in options) ? options.delay : 0;
 
         for (let i = 0; i < this.leaves.length; i++) {
-            const delay = OCLeafOrder[options.order](options, i, this.leaves.length);
+            const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);
             this.leaves[i].style.cssText += options.leafAnimation.toStringWithModifiedDelay(delay);
         }
 

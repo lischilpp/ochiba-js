@@ -1,4 +1,4 @@
-OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2, extended by me
+OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2
   // no easing, no acceleration
   linear: t => t,
   // accelerating from zero velocity
@@ -78,19 +78,23 @@ const OCLeafOrder = {
     },
     midOut: function(options, i, leaveCount) {
         const mid = Math.floor(leaveCount * 0.5);
+        let t;
         if (i >= mid) {
-            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (i - mid) / (leaveCount - mid));
+            t = (i - mid) / (leaveCount - mid);
         } else {
-            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (mid - i) / mid);
+            t = (mid - i) / mid;
         }
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, t);
     },
     outMid: function(options, i, leaveCount) {
         const mid = Math.floor(leaveCount * 0.5);
+        let t;
         if (i < mid) {
-            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, i / mid);
+            t = i / mid;
         } else {
-            return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, (leaveCount - i) / (leaveCount - mid));
+            t = (leaveCount - i) / (leaveCount - mid);
         }
+        return options.delay + OCHelpers.getDelayForTiming(options.duration, options.timing, t);
     },
     random: function(options, i, leaveCount) {
         if (i == 0) {

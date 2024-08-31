@@ -25,8 +25,6 @@ OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/165
   easeOutQuint: t => 1+(--t)*t*t*t*t,
   // acceleration until halfway, then deceleration 
   easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t,
-  // CSS "ease" approximation (smooth acceleration and deceleration)
-  ease: t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
 }
 
 class OCHelpers {

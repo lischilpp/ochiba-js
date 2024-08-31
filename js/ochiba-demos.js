@@ -49,7 +49,7 @@ oc.animateLeaves({
         htmlCode:
 `<html>
     <body>
-        <h1 id="h1">You can use OchibaJS on any element that has child nodes or text</h1>
+        <h1 id="h1">You can use OchibaJS on any element that has child nodes or text.</h1>
         <script src="js/ochiba.js"></script>
     </body>
 </html>
@@ -183,6 +183,52 @@ oc.animateLeaves({
         timing: 'ease',
         keyframes: 'slide-in-from-left'
     },
+});
+    `
+    },
+    {
+        name: 'Whirlwind',
+        htmlCode:
+`<html>
+    <body>
+        <h1 id="h1">This looks pretty dope.</h1>
+        <script src="js/ochiba.js"></script>
+    </body>
+</html>
+`,
+
+        cssCode: 
+`
+body {
+    font-family: Tahoma, sans-serif;
+}
+h1 {
+    color: aqua;
+    font-family: Tahoma, sans-serif;
+    text-align: center;
+    margin-top: 80px;
+}
+h1 .leaf { /* make all leaves invisible first */
+    opacity: 0;
+}
+@keyframes whirlwind {
+    from { transform: rotate(7200deg) scale(0.5) translateY(-100px); opacity: 0; }
+    to   { transform: rotate(0) scale(1); opacity: 1; }
+}`,
+        jsCode:
+`const elem = document.getElementById('h1');
+const oc = new OC(elem);
+oc.animateLeaves({
+    delay: 0,
+    order: 'mid-out',
+    timing: 'ease-in-out-quad',
+    leafAnimation: {
+        duration: 2,
+        delay: 0,
+        timing: 'ease-in',
+        keyframes: 'whirlwind',
+    },
+    duration: 1
 });
     `
 }

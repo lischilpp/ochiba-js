@@ -4,9 +4,9 @@ OchibaJS is a lightweight JavaScript library designed to simplify the animation 
 
 ### Key Features
 
-- **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
-
 - **Flexible Animation Control:** You can easily control various animation properties such as duration, delay, and easing, enabling the creation of complex animations with just a few lines of code.
+
+- **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
 

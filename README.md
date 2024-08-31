@@ -1,56 +1,32 @@
 # ochiba-js
-<img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400">
-OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements, making it easy to bring your web content to life. The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
+<p align="center"><img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400"></p>
+<p align="center">
+OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements,<br>
+ making it easy to bring your web content to life.<br><br>
+The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
+</p>
+<p align="center">
+  <a href="https://lischilpp.github.io/ochiba-js/">Interactive Page</a>
+</p>
 
 ### Key Features
 
-- **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
+- **Flexible Animation Control:** Easily specify the order in which elements animate—whether from first-to-last, from the middle, or in a custom sequence—while controlling key animation properties like duration, delay, and easing, allowing you to create complex animations with just a few lines of code.
 
-- **Flexible Animation Control:** You can easily control various animation properties such as duration, delay, and easing, enabling the creation of complex animations with just a few lines of code.
+- **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
 
- [Interactive Page](https://lischilpp.github.io/ochiba-js/)
-
  ## 🗺️ Navigation 
-- [<code>📝 Animating child nodes</code>](#-animating-child-nodes)
-- [<code>📝 Example usage</code>](#-example-usage)
+- [<code>📃 Description</code>](#ochiba-js)
+- [<code>🤹 Animating child nodes</code>](#animating-child-nodes)
+- [<code>⛓️ Animating a chain of elements and their child nodes</code>](#animating-a-chain-of-elements-and-their-child-nodes)
+- [<code>⚙️ Animation Options</code>](#animation-options)
 - [<code>📝 License</code>](#-license)
 
 ## Animating child nodes
 
-#### `new OC(element)`
-
-Creates a new instance of the `OC` class.
-
-**Parameters:**
-
-- `element` (HTMLElement): The HTML element to which the animation will be applied. This element is typically selected using `document.getElementById()`.
-
-#### Methods
-
-##### `animateLeaves(options)`
-
-Animates the child nodes of the specified HTML element using the provided options.
-
-**Parameters:**
-
-- `options` (Options Object): An object containing animation configuration options.
-
-## Options Object Properties
-
-- `duration` (number): The duration of the entire animation, in seconds.
-- `order` (string): The order in which the leaves will be animated. Acceptable values are `'asc'` (ascending) or `'desc'` (descending).
-- `timing` (string): The timing function for the overall animation. Common values include `'linear'`, `'ease'`, `'ease-in'`, etc.
-- `leafAnimation` (Object): An object containing the specific animation details for each individual leaf.
-
-**LeafAnimation Object Properties:**
-
-- `duration` (number): The duration of the animation for each individual leaf, in seconds.
-- `timing` (string): The timing function for the leaf animation. Common values include `'linear'`, `'ease'`, etc.
-- `keyframes` (string): The name of the keyframes animation to apply to each leaf. Example: `'wave-from-left'`.
-
-## Example Usage
+### Example Usage
 
 ```javascript
 // Get the HTML element with ID 'h1'
@@ -71,6 +47,59 @@ oc.animateLeaves({
     },
 });
 ```
+
+#### `new OC(element)`
+
+Creates a new instance of the `OC` class.
+
+**Parameters:**
+
+- `element` (HTMLElement): The HTML element to which the animation will be applied. This element is typically selected using `document.getElementById()`.
+
+#### Methods
+
+##### `animateLeaves(options)`
+
+Animates the child nodes of the specified HTML element using the provided options.
+
+**Parameters:**
+
+- `options` (Options Object): An object containing animation configuration options.
+
+## Animating a chain of elements and their child nodes
+
+## Animation Options
+
+- `duration` (number): The duration of the entire animation, in seconds.
+- `order` (string): The order in which the leaves will be animated.<br>
+  Possible values:
+   - `'asc'` (ascending order)
+   - `'desc'` (descending order)
+   - `'mid-out'` (from middle outwards)
+   - `'out-mid'` (from edges inwards)
+   - `'random'` (random order)
+- `timing` (string): The timing function for the overall animation.<br>
+  Possible values:
+   - 'linear'` (no easing, no acceleration)
+   - `'ease-in-quad'` (accelerating from zero velocity)
+   - `'ease-out-quad'` (decelerating to zero velocity)
+   - `'ease-in-out-quad'` (acceleration until halfway, then deceleration)
+   - `'ease-in-cubic'` (accelerating from zero velocity)
+   - `'ease-out-cubic'` (decelerating to zero velocity)
+   - `'ease-in-out-cubic'` (acceleration until halfway, then deceleration)
+   - `'ease-in-quart'` (accelerating from zero velocity)
+   - `'ease-out-quart'` (decelerating to zero velocity)
+   - `'ease-in-out-quart'` (acceleration until halfway, then deceleration)
+   - `'ease-in-quint'` (accelerating from zero velocity)
+   - `'ease-out-quint'` (decelerating to zero velocity)
+   - `'ease-in-out-quint'` (acceleration until halfway, then deceleration)
+- `leafAnimation` (Object): An object containing the specific animation details for each individual leaf.
+
+**LeafAnimation Object Properties:**
+
+- `duration` (number): The duration of the animation for each individual leaf, in seconds.
+- `timing` (string): The timing function for the leaf animation. Common values include `'linear'`, `'ease'`, etc.
+- `keyframes` (string): The name of the keyframes animation to apply to each leaf. Example: `'wave-from-left'`.
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

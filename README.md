@@ -80,7 +80,7 @@ Animates the child nodes of the specified HTML element using the provided option
    - `'random'` (random order)
 - `timing` (string): The timing function for the overall animation.<br>
   Possible values:
-   - 'linear'` (no easing, no acceleration)
+   - `'linear'` (no easing, no acceleration)
    - `'ease-in-quad'` (accelerating from zero velocity)
    - `'ease-out-quad'` (decelerating to zero velocity)
    - `'ease-in-out-quad'` (acceleration until halfway, then deceleration)
@@ -93,13 +93,24 @@ Animates the child nodes of the specified HTML element using the provided option
    - `'ease-in-quint'` (accelerating from zero velocity)
    - `'ease-out-quint'` (decelerating to zero velocity)
    - `'ease-in-out-quint'` (acceleration until halfway, then deceleration)
-- `leafAnimation` (Object): An object containing the specific animation details for each individual leaf.
-
-**LeafAnimation Object Properties:**
-
-- `duration` (number): The duration of the animation for each individual leaf, in seconds.
-- `timing` (string): The timing function for the leaf animation. Common values include `'linear'`, `'ease'`, etc.
-- `keyframes` (string): The name of the keyframes animation to apply to each leaf. Example: `'wave-from-left'`.
+- `leafAnimation` (Object): An object containing the specific animation applied to each child node.<br>
+   Possible properties:
+   - `'duration'` (number): The duration of the animation in seconds.
+   - `'timing'` (string): The timing function for the animation.<br> Possible values:
+     - `'linear'` (constant speed)
+     - `'ease'` (slow start and end, fast in the middle)
+     - `'ease-in'` (slow start)
+     - `'ease-out'` (slow end)
+     - `'ease-in-out'` (slow start and end)
+     - `'cubic-bezier(n,n,n,n)'` (custom cubic-bezier function)
+   - `'delay'` (number): The delay before the animation starts in seconds.
+   - `'keyframes'` (object): The keyframes that define the animation sequence.
+   - `'iterations'` (number): The number of times the animation should repeat.
+   - `'fillMode'` (string): The effect of the animation on the element after it completes.<br> Possible values:
+     - `'none'` (default behavior, no styles are applied after the animation ends)
+     - `'forwards'` (styles are retained after the animation ends)
+     - `'backwards'` (styles are applied from the first keyframe before the animation starts)
+     - `'both'` (styles are retained both before and after the animation)
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

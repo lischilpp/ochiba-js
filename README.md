@@ -95,6 +95,7 @@ Animates the child nodes of the specified HTML element using the provided option
    - `'ease-in-out-quint'` (acceleration until halfway, then deceleration)
 - `leafAnimation` (Object): An object containing the specific animation applied to each child node.<br>
    Possible properties:
+   - `'keyframes'` (string): The keyframes name that define the animation sequence.
    - `'duration'` (number): The duration of the animation in seconds.
    - `'timing'` (string): The timing function for the animation.<br> Possible values:
      - `'linear'` (constant speed)
@@ -104,7 +105,6 @@ Animates the child nodes of the specified HTML element using the provided option
      - `'ease-in-out'` (slow start and end)
      - `'cubic-bezier(n,n,n,n)'` (custom cubic-bezier function)
    - `'delay'` (number): The delay before the animation starts in seconds.
-   - `'keyframes'` (object): The keyframes that define the animation sequence.
    - `'iterations'` (number): The number of times the animation should repeat.
    - `'fillMode'` (string): The effect of the animation on the element after it completes.<br> Possible values:
      - `'none'` (default behavior, no styles are applied after the animation ends)

@@ -18,11 +18,35 @@ The library is built with simplicity in mind, featuring a minimal file size and 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
 
  ## 🗺️ Navigation 
-- [<code>📝 Animating child nodes</code>](#-animating-child-nodes)
-- [<code>📝 Example usage</code>](#-example-usage)
+- [<code>📃 Description</code>](#ochiba-js)
+- [<code>🤹 Animating child nodes</code>](#animating-child-nodes)
+- [<code>⛓️ Animating a chain of elements and their child nodes</code>](#animating-a-chain-of-elements-and-their-child-nodes)
+- [<code>⚙️ Animation Options</code>](#animation-options)
 - [<code>📝 License</code>](#-license)
 
 ## Animating child nodes
+
+### Example Usage
+
+```javascript
+// Get the HTML element with ID 'h1'
+const elem = document.getElementById('h1');
+
+// Create a new OC instance
+const oc = new OC(elem);
+
+// Animate leaves on the element
+oc.animateLeaves({
+    duration: 1,
+    order: 'asc',
+    timing: 'linear',
+    leafAnimation: {
+        duration: 1,
+        timing: 'ease',
+        keyframes: 'wave-from-left'
+    },
+});
+```
 
 #### `new OC(element)`
 
@@ -42,7 +66,9 @@ Animates the child nodes of the specified HTML element using the provided option
 
 - `options` (Options Object): An object containing animation configuration options.
 
-## Options Object Properties
+## Animating a chain of elements and their child nodes
+
+## Animation Options
 
 - `duration` (number): The duration of the entire animation, in seconds.
 - `order` (string): The order in which the leaves will be animated.<br>
@@ -74,28 +100,6 @@ Animates the child nodes of the specified HTML element using the provided option
 - `duration` (number): The duration of the animation for each individual leaf, in seconds.
 - `timing` (string): The timing function for the leaf animation. Common values include `'linear'`, `'ease'`, etc.
 - `keyframes` (string): The name of the keyframes animation to apply to each leaf. Example: `'wave-from-left'`.
-
-## Example Usage
-
-```javascript
-// Get the HTML element with ID 'h1'
-const elem = document.getElementById('h1');
-
-// Create a new OC instance
-const oc = new OC(elem);
-
-// Animate leaves on the element
-oc.animateLeaves({
-    duration: 1,
-    order: 'asc',
-    timing: 'linear',
-    leafAnimation: {
-        duration: 1,
-        timing: 'ease',
-        keyframes: 'wave-from-left'
-    },
-});
-```
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

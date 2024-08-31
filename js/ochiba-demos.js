@@ -5,7 +5,7 @@ const ochibaDemos = [
 `<html>
     <body>
         <h1 id="h1">OchibaJS is awesome!</h1>
-        <script src="ochiba.js"></script>
+        <script src="js/ochiba.js"></script>
     </body>
 </html>
 `,
@@ -50,7 +50,7 @@ oc.animateLeaves({
 `<html>
     <body>
         <h1 id="h1">You can use OchibaJS on any element that has child nodes or text</h1>
-        <script src="ochiba.js"></script>
+        <script src="js/ochiba.js"></script>
     </body>
 </html>
 `,
@@ -92,7 +92,7 @@ oc.animateLeaves({
 `<html>
     <body>
         <h1 id="h1">Shake it! Shake it!</h1>
-        <script src="ochiba.js"></script>
+        <script src="js/ochiba.js"></script>
     </body>
 </html>
 `,
@@ -146,7 +146,7 @@ oc.animateLeaves({
             <li>Strawberries</li>
             <li>Blueberries</li>
         </ul>
-        <script src="ochiba.js"></script>
+        <script src="js/ochiba.js"></script>
     </body>
 </html>
 `,

@@ -55,7 +55,7 @@ Initializes a new OchibaJS object.
 **Parameters:**
 
 - `element` (HTMLElement): The HTML element to which the animation will be applied. <br>
-This element can for instance be selected using `document.getElementById()` or ``document.querySelector()`.
+This element can for instance be selected using `document.getElementById()` or `document.querySelector()`.
 
 #### Methods
 

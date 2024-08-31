@@ -1,5 +1,5 @@
 # ochiba-js
-<img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="500">
+<img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400">
 OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements, making it easy to bring your web content to life. The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
 
 ### Key Features

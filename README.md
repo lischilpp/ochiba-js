@@ -45,8 +45,28 @@ Animates the child nodes of the specified HTML element using the provided option
 ## Options Object Properties
 
 - `duration` (number): The duration of the entire animation, in seconds.
-- `order` (string): The order in which the leaves will be animated. Acceptable values are `'asc'` (ascending) or `'desc'` (descending).
-- `timing` (string): The timing function for the overall animation. Common values include `'linear'`, `'ease'`, `'ease-in'`, etc.
+- `order` (string): The order in which the leaves will be animated.<br>
+  Possible values:
+   - `'asc'` (ascending order)
+   - `'desc'` (descending order)
+   - `'mid-out'` (from middle outwards)
+   - `'out-mid'` (from edges inwards)
+   - `'random'` (random order)
+- `timing` (string): The timing function for the overall animation.<br>
+  Possible values:
+   - 'linear'` (no easing, no acceleration)
+   - `'ease-in-quad'` (accelerating from zero velocity)
+   - `'ease-out-quad'` (decelerating to zero velocity)
+   - `'ease-in-out-quad'` (acceleration until halfway, then deceleration)
+   - `'ease-in-cubic'` (accelerating from zero velocity)
+   - `'ease-out-cubic'` (decelerating to zero velocity)
+   - `'ease-in-out-cubic'` (acceleration until halfway, then deceleration)
+   - `'ease-in-quart'` (accelerating from zero velocity)
+   - `'ease-out-quart'` (decelerating to zero velocity)
+   - `'ease-in-out-quart'` (acceleration until halfway, then deceleration)
+   - `'ease-in-quint'` (accelerating from zero velocity)
+   - `'ease-out-quint'` (decelerating to zero velocity)
+   - `'ease-in-out-quint'` (acceleration until halfway, then deceleration)
 - `leafAnimation` (Object): An object containing the specific animation details for each individual leaf.
 
 **LeafAnimation Object Properties:**

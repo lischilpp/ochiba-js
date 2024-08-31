@@ -69,6 +69,45 @@ Animates the child nodes of the specified HTML element using the provided option
 
 ## Animating a chain of elements and their child nodes
 
+### Example Usage
+
+```javascript
+const seq = new OCSequence([
+    [{
+            root: document.getElementById('headline'),
+            animationProps: {
+                delay: 0.1,
+                order: 'asc',
+                timing: 'linear',
+                leafAnimation: {
+                    duration: 1,
+                    delay: 0,
+                    timing: 'ease',
+                    keyframes: 'headline',
+                },
+                duration: 1,
+            }
+        }
+    ],
+    [{
+        root: document.getElementById('sub-headline'),
+        animationProps: {
+            delay: 0,
+            order: 'asc',
+            timing: 'linear',
+            leafAnimation: {
+                duration: 1,
+                delay: 0,
+                timing: 'ease',
+                keyframes: 'sub-headline',
+            },
+            duration: 1
+        }
+    }],
+])
+seq.animate()
+```
+
 ## Animation Options
 
 - `duration` (number): The duration of the entire animation, in seconds.

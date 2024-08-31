@@ -65,7 +65,8 @@ Animates the child nodes of the specified HTML element using the provided option
 
 **Parameters:**
 
-- `options` (Options Object): An object containing animation configuration options.
+- `options` (Animation Options Object): An object containing animation configuration options.<br>
+  See [<code>⚙️ Animation Options</code>](#animation-options) for details
 
 ## Animating a chain of elements and their child nodes
 

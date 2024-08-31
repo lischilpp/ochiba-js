@@ -1,16 +1,21 @@
 # ochiba-js
 <p align="center"><img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400"></p>
-OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements, making it easy to bring your web content to life. The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
+<p align="center">
+OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements,<br>
+ making it easy to bring your web content to life.<br><br>
+The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
+</p>
+<p align="center">
+  <a href="https://lischilpp.github.io/ochiba-js/">Interactive Page</a>
+</p>
 
 ### Key Features
 
-- **Flexible Animation Control:** You can easily control various animation properties such as duration, delay, and easing, enabling the creation of complex animations with just a few lines of code.
+- **Flexible Animation Control:** Easily specify the order in which elements animate—whether from first-to-last, from the middle, or in a custom sequence—while controlling key animation properties like duration, delay, and easing, allowing you to create complex animations with just a few lines of code.
 
 - **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
-
- [Interactive Page](https://lischilpp.github.io/ochiba-js/)
 
  ## 🗺️ Navigation 
 - [<code>📝 Animating child nodes</code>](#-animating-child-nodes)

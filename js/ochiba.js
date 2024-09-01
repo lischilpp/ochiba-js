@@ -1,31 +1,58 @@
-OCTimingFunctions = {// easing functions by gre: https://gist.github.com/gre/1650294 that are licensed under WTFPL version 2
-  // no easing, no acceleration
-  linear: t => t,
-  // accelerating from zero velocity
-  easeInQuad: t => t*t,
-  // decelerating to zero velocity
-  easeOutQuad: t => t*(2-t),
-  // acceleration until halfway, then deceleration
-  easeInOutQuad: t => t<.5 ? 2*t*t : -1+(4-2*t)*t,
-  // accelerating from zero velocity 
-  easeInCubic: t => t*t*t,
-  // decelerating to zero velocity 
-  easeOutCubic: t => (--t)*t*t+1,
-  // acceleration until halfway, then deceleration 
-  easeInOutCubic: t => t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1,
-  // accelerating from zero velocity 
-  easeInQuart: t => t*t*t*t,
-  // decelerating to zero velocity 
-  easeOutQuart: t => 1-(--t)*t*t*t,
-  // acceleration until halfway, then deceleration
-  easeInOutQuart: t => t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t,
-  // accelerating from zero velocity
-  easeInQuint: t => t*t*t*t*t,
-  // decelerating to zero velocity
-  easeOutQuint: t => 1+(--t)*t*t*t*t,
-  // acceleration until halfway, then deceleration 
-  easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t,
+function cubicBezier(p1x, p1y, p2x, p2y) {
+    const NEWTON_ITERATIONS = 5;
+    const NEWTON_MIN_SLOPE = 0.001;
+    
+    const cx = 3 * p1x;
+    const bx = 3 * (p2x - p1x) - cx;
+    const ax = 1 - cx - bx;
+    const cy = 3 * p1y;
+    const by = 3 * (p2y - p1y) - cy;
+    const ay = 1 - cy - by;
+    
+    function cubic(a, b, c, t) {
+        return ((a * t + b) * t + c) * t;
+    }
+    
+    function derivative(a, b, c, t) {
+        return 3 * a * t * t + 2 * b * t + c;
+    }
+    
+    function newtonRaphsonIterate(x, guessT, ax, bx, cx) {
+        let t = guessT;
+        for (let i = 0; i < NEWTON_ITERATIONS; ++i) {
+            const currentSlope = derivative(ax, bx, cx, t);
+            if (Math.abs(currentSlope) < NEWTON_MIN_SLOPE) break;
+            const currentX = cubic(ax, bx, cx, t) - x;
+            t -= currentX / currentSlope;
+        }
+        return t;
+    }
+
+    return function(t) {
+        let x = Math.max(0, Math.min(1, t));
+        if (t > 0 && t < 1) {
+            x = newtonRaphsonIterate(t, t, ax, bx, cx);
+        }
+        return cubic(ay, by, cy, x);
+    };
 }
+
+function inverseCubicBezier(p1x, p1y, p2x, p2y) {
+    return cubicBezier(p1y, p1x, p2y, p2x);
+}
+
+const OCTimingFunctions = {
+    // Linear - no easing, no acceleration
+    linear: t => t,
+    // Ease - slight acceleration from zero to full speed, then slight deceleration
+    ease: inverseCubicBezier(0.25, 0.1, 0.25, 1),
+    // Ease-in - acceleration from zero velocity
+    easeIn: inverseCubicBezier(0.42, 0, 1, 1),
+    // Ease-out - deceleration to zero velocity
+    easeOut: inverseCubicBezier(0, 0, 0.58, 1),
+    // Ease-in-out - acceleration until halfway, then deceleration
+    easeInOut: inverseCubicBezier(0.42, 0, 0.58, 1),
+};
 
 class OCHelpers {
     static intRange(start, end) {
@@ -35,7 +62,7 @@ class OCHelpers {
         array.sort(() => .5 - Math.random());
     }
     static getDelayForTiming(duration, timing, progres) {
-        return duration - OCTimingFunctions[timing](1 - progres) * duration;
+        return duration * OCTimingFunctions[timing](progres);
     }
     static hyphenToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });

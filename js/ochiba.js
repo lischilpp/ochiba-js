@@ -55,17 +55,26 @@ const OCTimingFunctions = {
 };
 
 class OCHelpers {
+    static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
+
     static intRange(start, end) {
         return Array.from({length: end - start + 1}, (_, i) => start + i);
     }
     static shuffleArray(array) {
         array.sort(() => .5 - Math.random());
     }
-    static getDelayForTiming(duration, timing, progres) {
-        return duration * OCTimingFunctions[timing](progres);
+    static getDelayForTiming(duration, timingFunction, progres) {
+        return duration * timingFunction(progres);
     }
     static hyphenToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+    }
+    static isCubicBezierSyntax(str) {
+        return OCHelpers.cubicBezierRegex.test(str);
+    }
+    static getInverseCubicBezierFromString(str) {
+        const match = OCHelpers.cubicBezierRegex.exec(str);
+        return inverseCubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
     }
 }
 
@@ -208,7 +217,16 @@ class OC {
         
         if ('timing' in options) options.timing = OCHelpers.hyphenToCamelCase(options.timing);
         else options.timing = 'linear';
-        if (!(options.timing in OCTimingFunctions)) throw `timing "${options.timing}" is not a valid timing function`;
+        if (options.timing in OCTimingFunctions){
+            options.timing = OCTimingFunctions[options.timing];
+        } else {
+            options.timing = options.timing.replace(/ /g,'') // remove spaces
+            if (OCHelpers.isCubicBezierSyntax(options.timing)) {
+                options.timing = OCHelpers.getInverseCubicBezierFromString(options.timing);
+            } else {
+                throw `timing "${options.timing}" is not a valid timing function`;
+            }
+        }
         
         if ('order' in options) options.order = OCHelpers.hyphenToCamelCase(options.order);
         else options.order = 'asc';

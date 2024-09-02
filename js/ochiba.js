@@ -1,4 +1,4 @@
-function cubicBezier(p1x, p1y, p2x, p2y) {
+function cubicBezier(p1y, p1x, p2y, p2x) {
     const NEWTON_ITERATIONS = 5;
     const NEWTON_MIN_SLOPE = 0.001;
     
@@ -37,21 +37,17 @@ function cubicBezier(p1x, p1y, p2x, p2y) {
     };
 }
 
-function inverseCubicBezier(p1x, p1y, p2x, p2y) {
-    return cubicBezier(p1y, p1x, p2y, p2x);
-}
-
 const OCTimingFunctions = {
     // Linear - no easing, no acceleration
     linear: t => t,
     // Ease - slight acceleration from zero to full speed, then slight deceleration
-    ease: inverseCubicBezier(0.25, 0.1, 0.25, 1),
+    ease: cubicBezier(0.25, 0.1, 0.25, 1),
     // Ease-in - acceleration from zero velocity
-    easeIn: inverseCubicBezier(0.42, 0, 1, 1),
+    easeIn: cubicBezier(0.42, 0, 1, 1),
     // Ease-out - deceleration to zero velocity
-    easeOut: inverseCubicBezier(0, 0, 0.58, 1),
+    easeOut: cubicBezier(0, 0, 0.58, 1),
     // Ease-in-out - acceleration until halfway, then deceleration
-    easeInOut: inverseCubicBezier(0.42, 0, 0.58, 1),
+    easeInOut: cubicBezier(0.42, 0, 0.58, 1),
 };
 
 class OCHelpers {
@@ -72,9 +68,9 @@ class OCHelpers {
     static isCubicBezierSyntax(str) {
         return OCHelpers.cubicBezierRegex.test(str);
     }
-    static getInverseCubicBezierFromString(str) {
+    static getCubicBezierFromString(str) {
         const match = OCHelpers.cubicBezierRegex.exec(str);
-        return inverseCubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
+        return cubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
     }
 }
 

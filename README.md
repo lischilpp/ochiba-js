@@ -1,3 +1,11 @@
+## ⚠️ Development Notice
+
+**This repository is under active development and not ready for production yet.**
+
+- Features may change frequently
+- Documentation may be incomplete
+- Use at your own risk
+
 # ochiba-js
 <p align="center"><img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400"></p>
 <p align="center">

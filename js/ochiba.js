@@ -83,7 +83,7 @@ class OC_ArgumentParser {
 
         // callback
         OC_ArgumentParser.parseAttribute(options, 'options', 'callback', 'function');
-        
+
         return options;
     }
 
@@ -287,12 +287,13 @@ class OC {
         }
     }
 
-    // ### initializing leaves
+    // ### initialization of child elements
 
     initChildElements() {
         for (const child of this.root.children) {
             child.classList.add('leaf');
             this.leaves.push(child);
+            this.handleAnimationFromInvisible();
         }
     }
 
@@ -305,12 +306,25 @@ class OC {
                 : '<span class="leaf" style="' + style + '">' + letter + '</span>'
         ).join('');
         this.leaves = this.root.getElementsByClassName('leaf');
+        this.handleAnimationFromInvisible();
+    }
+
+    handleAnimationFromInvisible() {
+        if (window.getComputedStyle(this.root).getPropertyValue('opacity') == '0') {
+            for (const child of this.leaves) {
+                child.style.opacity = '0';
+            }
+        }
     }
 
     // ### animation
 
     animateLeaves(options) {
         options = OC_ArgumentParser.parseAnimationOptions(options);
+
+        if (window.getComputedStyle(this.root).getPropertyValue('opacity') == '0') {
+            this.root.style.opacity = '1';
+        }
 
         for (let i = 0; i < this.leaves.length; i++) {
             const delay = options.leafAnimation.delay + OC_LeafOrder.orderFunctions[options.order](options, i, this.leaves.length);

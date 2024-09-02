@@ -16,11 +16,9 @@ const ochibaDemos = [
     font-family: Tahoma, sans-serif;
     text-align: center;
     margin-top: 80px;
-}
-h1 .leaf { /* make all leaves invisible first */
     opacity: 0;
 }
-@keyframes wave-from-left {
+@keyframes wave {
     0%   { transform: translateY(50px); opacity: 0; }
     20%  { transform: translateY(-45px); opacity: 0.2; }
     40%  { transform: translateY(35px); opacity: 0.4; }
@@ -39,7 +37,7 @@ oc.animateLeaves({
     leafAnimation: {
         duration: 1,
         timing: 'ease',
-        keyframes: 'wave-from-left'
+        keyframes: 'wave'
     },
 });
 `
@@ -62,8 +60,6 @@ oc.animateLeaves({
     text-align: center;
     margin-top: 80px;
     font-size: 1.5em;
-}
-h1 .leaf { /* make all leaves invisible first */
     opacity: 0;
 }
 @keyframes scale-in {
@@ -156,12 +152,12 @@ oc.animateLeaves({
 body {
     font-family: Tahoma, sans-serif;
 }
-.leaf { /* make all leaves invisible first */
-    opacity: 0;
-}
 h2, li {
     color: #fff;
     font-size: 1.2em;
+}
+ul {
+    opacity: 0;
 }
 h2 {
     margin-left: 10px;
@@ -207,8 +203,6 @@ h1 {
     font-family: Tahoma, sans-serif;
     text-align: center;
     margin-top: 80px;
-}
-h1 .leaf { /* make all leaves invisible first */
     opacity: 0;
 }
 @keyframes whirlwind {

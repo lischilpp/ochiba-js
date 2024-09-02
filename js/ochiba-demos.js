@@ -221,7 +221,7 @@ const oc = new OC(elem);
 oc.animateLeaves({
     delay: 0,
     order: 'mid-out',
-    timing: 'ease-in-out-quad',
+    timing: 'ease-in-out',
     leafAnimation: {
         duration: 2,
         delay: 0,

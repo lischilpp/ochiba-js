@@ -4,8 +4,11 @@ class OC_ArgumentParser {
 
     static parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue, allowedValues) {
         if (attributeName in containingDict) {
+            if (typeof allowedValues !== 'undefined' && typeof containingDict[attributeName] == 'string') {
+                if (!allowedValues.includes(containingDict[attributeName])) throw `${containingDictName}.${attributeName} must be one of the following values: ${allowedValues.join(', ')}`;
+                return;
+            }
             if (typeof containingDict[attributeName] !== attributeType) throw `${containingDictName}.${attributeName} must be of type ${attributeType}`; 
-            if (typeof allowedValues !== 'undefined' && !(containingDict[attributeName] in allowedValues)) throw `${containingDictName}.${attributeName} must be one of the following values: ${allowedValues.join(', ')}`; 
         } else if (typeof defaultValue === attributeType) {
             containingDict[attributeName] = defaultValue;
         }
@@ -272,8 +275,7 @@ class OC {
         OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease');
 
         // leafAnimation iterations
-        if (!('iterations' in options.leafAnimation && options.leafAnimation.iterations in ['infinite', 'initial', 'inherit']))
-            OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1);
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1, ['infinite', 'initial', 'inherit']);
 
         // leafAnimation fillMode
         OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards');

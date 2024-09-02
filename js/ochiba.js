@@ -37,18 +37,30 @@ function cubicBezier(p1y, p1x, p2y, p2x) {
     };
 }
 
-const OCTimingFunctions = {
-    // Linear - no easing, no acceleration
-    linear: t => t,
-    // Ease - slight acceleration from zero to full speed, then slight deceleration
-    ease: cubicBezier(0.25, 0.1, 0.25, 1),
-    // Ease-in - acceleration from zero velocity
-    easeIn: cubicBezier(0.42, 0, 1, 1),
-    // Ease-out - deceleration to zero velocity
-    easeOut: cubicBezier(0, 0, 0.58, 1),
-    // Ease-in-out - acceleration until halfway, then deceleration
-    easeInOut: cubicBezier(0.42, 0, 0.58, 1),
-};
+class OCTiming {
+    static TimingFunctions = {
+        // Linear - no easing, no acceleration
+        linear: t => t,
+        // Ease - slight acceleration from zero to full speed, then slight deceleration
+        ease: cubicBezier(0.25, 0.1, 0.25, 1),
+        // Ease-in - acceleration from zero velocity
+        easeIn: cubicBezier(0.42, 0, 1, 1),
+        // Ease-out - deceleration to zero velocity
+        easeOut: cubicBezier(0, 0, 0.58, 1),
+        // Ease-in-out - acceleration until halfway, then deceleration
+        easeInOut: cubicBezier(0.42, 0, 0.58, 1),
+    };
+    static fromString(str) {
+        if (str in OCTiming.TimingFunctions){
+            return OCTiming.TimingFunctions[str];
+        } else {
+            str = str.replace(/ /g,'') // remove spaces
+            if (OCHelpers.isCubicBezierSyntax(str)) {
+                return OCHelpers.getCubicBezierFromString(str);
+            } else throw `"${str}" is not a valid timing value`;
+        }
+    }
+}
 
 class OCHelpers {
     static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
@@ -62,9 +74,6 @@ class OCHelpers {
     static getDelayForTiming(duration, timingFunction, progres) {
         return duration * timingFunction(progres);
     }
-    static hyphenToCamelCase(str) {
-        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-    }
     static isCubicBezierSyntax(str) {
         return OCHelpers.cubicBezierRegex.test(str);
     }
@@ -75,15 +84,14 @@ class OCHelpers {
 }
 
 class CSSAnimation {
-    constructor(duration=1, timing='ease', delay=0, keyframes, iterations=1, fillMode='forwards', prefixes=['']) {
-        if (keyframes == null) throw 'keyframes is required for CSSAnimation'
+    constructor(keyframes, duration, delay, timing, iterations, fillMode, prefixes) {
         this.keyframes = keyframes;
         this.duration = duration;
         this.delay = delay;
         this.timing = timing;
-        this.prefixes = prefixes;
         this.iterations = iterations;
         this.fillMode = fillMode;
+        this.prefixes = prefixes;
     }
 
     toString() {
@@ -193,7 +201,7 @@ class OC {
     }
 
     animateLeaves(options) {
-        options = this.validateAnimationOptions(options);
+        options = this.parseAnimationOptions(options);
 
         for (let i = 0; i < this.leaves.length; i++) {
             const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);
@@ -207,44 +215,68 @@ class OC {
         }
     }
 
-    validateAnimationOptions(options) {
-        if (options == null) throw 'options are required for defining the animation'
-        if (options.leafAnimation == null) throw 'leafAnimation is required for defining the animation';
-        
-        if ('timing' in options) options.timing = OCHelpers.hyphenToCamelCase(options.timing);
-        else options.timing = 'linear';
-        if (options.timing in OCTimingFunctions){
-            options.timing = OCTimingFunctions[options.timing];
-        } else {
-            options.timing = options.timing.replace(/ /g,'') // remove spaces
-            if (OCHelpers.isCubicBezierSyntax(options.timing)) {
-                options.timing = OCHelpers.getInverseCubicBezierFromString(options.timing);
-            } else {
-                throw `timing "${options.timing}" is not a valid timing function`;
-            }
+    parseAnimationOptions(options) {
+        function parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue) {
+            if (attributeName in containingDict) {
+                if (typeof containingDict[attributeName] !== attributeType) throw `${containingDictName}.${attributeName} must be of type ${attributeType}`; 
+            } else containingDict[attributeName] = defaultValue;
         }
+        function hyphenToCamelCase(str) {
+            return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+        }
+
+        // ### required attributes
+        if (typeof options !== 'object') throw 'options are required'
+
+        // leafAnimation
+        // ###### required leafAnimation attributes
+        if (!('leafAnimation' in options)) throw 'leafAnimation is required';
         
-        if ('order' in options) options.order = OCHelpers.hyphenToCamelCase(options.order);
-        else options.order = 'asc';
+        // leafAnimation duration
+        parseAttribute(options.leafAnimation, 'options.leafAnimation', 'duration', 'number', 1);
 
-        if (!('duration' in options)) options.duration = 1;
+        // leafAnimation delay
+        parseAttribute(options.leafAnimation, 'options.leafAnimation', 'delay', 'number', 0);
 
-        const prefixes = this.getPrefixes(options);
+        // leafAnimation timing
+        parseAttribute(options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease');
+
+        // leafAnimation duration
+        parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1);
+
+        // leafAnimation fillMode
+        parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards');
+
         options.leafAnimation = new CSSAnimation(
-            options.leafAnimation.duration,
-            options.leafAnimation.timing,
-            options.leafAnimation.delay,
             options.leafAnimation.keyframes,
+            options.leafAnimation.duration,
+            options.leafAnimation.delay,
+            options.leafAnimation.timing,
             options.leafAnimation.iterations,
             options.leafAnimation.fillMode,
-            prefixes);
-        options.delay = ('delay' in options) ? options.delay : 0;
+            this.getPrefixes(options));
+        
+        // ### optional attributes
+        // duration
+        parseAttribute(options, 'options', 'duration', 'number', 1);
+
+        // delay
+        parseAttribute(options, 'options', 'delay', 'number', 0);
+
+        // order
+        parseAttribute(options, 'options', 'order', 'string', 'asc');
+        options.order = hyphenToCamelCase(options.order);
+
+        // timing
+        parseAttribute(options, 'options', 'timing', 'string', 'ease');
+        options.timing = hyphenToCamelCase(options.timing);
+        options.timing = OCTiming.fromString(options.timing)
 
         return options;
     }
 
     getLeaveAnimationAsString(options) {
-        options = this.validateAnimationOptions(options);
+        options = this.parseAnimationOptions(options);
         var cssString = '';
         for (var i = 0; i < this.leaves.length; i++) {
             const delay = options.leafAnimation.delay + OCLeafOrder[options.order](options, i, this.leaves.length);

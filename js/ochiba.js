@@ -14,6 +14,63 @@ class OC_ArgumentParser {
         }
     }
 
+    static parseAnimationOptions(options) {
+        // ### required attributes
+        if (typeof options !== 'object') throw 'options are required'
+
+        // leafAnimation
+        // ###### required leafAnimation attributes
+        if (!('leafAnimation' in options)) throw 'leafAnimation is required';
+        
+        // leafAnimation duration
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'duration', 'number', 1);
+
+        // leafAnimation delay
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'delay', 'number', 0);
+
+        // leafAnimation timing
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease');
+
+        // leafAnimation iterations
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1, ['infinite', 'initial', 'inherit']);
+
+        // leafAnimation fillMode
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards');
+
+        // prefixes
+        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'usePrefixes', 'boolean', false);
+
+        options.leafAnimation = new OC_CSSAnimation(
+            options.leafAnimation.keyframes,
+            options.leafAnimation.duration,
+            options.leafAnimation.delay,
+            options.leafAnimation.timing,
+            options.leafAnimation.iterations,
+            options.leafAnimation.fillMode,
+            options.leafAnimation.usePrefixes);
+        
+        // ### optional attributes
+        // duration
+        OC_ArgumentParser.parseAttribute(options, 'options', 'duration', 'number', 1);
+
+        // delay
+        OC_ArgumentParser.parseAttribute(options, 'options', 'delay', 'number', 0);
+
+        // order
+        OC_ArgumentParser.parseAttribute(options, 'options', 'order', 'string', 'asc');
+        options.order = OC_ArgumentParser.hyphenToCamelCase(options.order);
+
+        // timing
+        OC_ArgumentParser.parseAttribute(options, 'options', 'timing', 'string', 'ease');
+        options.timing = OC_ArgumentParser.hyphenToCamelCase(options.timing);
+        options.timing = OCTiming.fromString(options.timing)
+
+        // callback
+        OC_ArgumentParser.parseAttribute(options, 'options', 'callback', 'function');
+        
+        return options;
+    }
+
     static hyphenToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
     }
@@ -100,14 +157,15 @@ class OCTiming {
 
 class OC_CSSAnimation {
 
-    constructor(keyframes, duration, delay, timing, iterations, fillMode, prefixes) {
+    constructor(keyframes, duration, delay, timing, iterations, fillMode, usePrefixes) {
         this.keyframes = keyframes;
         this.duration = duration;
         this.delay = delay;
         this.timing = timing;
         this.iterations = iterations;
         this.fillMode = fillMode;
-        this.prefixes = prefixes;
+        this.usePrefixes = usePrefixes;
+        this.prefixes = this.usePrefixes ? ['-webkit-', '-moz-', '-o-', ''] : [''];
     }
 
     toString() {
@@ -209,7 +267,7 @@ class OC {
         }
     }
 
-    // ### initializing leaves ###
+    // ### initializing leaves
 
     initChildElements() {
         for (const child of this.root.children) {
@@ -229,15 +287,10 @@ class OC {
         this.leaves = this.root.getElementsByClassName('leaf');
     }
 
-    getPrefixes(options) {
-        if ('enablePrefixes' in options && options.enablePrefixes) {
-            return ['', '-webkit-', '-moz-', '-o-'];
-        }
-        return [''];
-    }
+    // ### animation
 
     animateLeaves(options) {
-        options = this.parseAnimationOptions(options);
+        options = OC_ArgumentParser.parseAnimationOptions(options);
 
         for (let i = 0; i < this.leaves.length; i++) {
             const delay = options.leafAnimation.delay + OC_LeafOrder.orderFunctions[options.order](options, i, this.leaves.length);
@@ -251,62 +304,8 @@ class OC {
         }
     }
 
-    parseAnimationOptions(options) {
-        // ### required attributes
-        if (typeof options !== 'object') throw 'options are required'
-
-        // leafAnimation
-        // ###### required leafAnimation attributes
-        if (!('leafAnimation' in options)) throw 'leafAnimation is required';
-        
-        // leafAnimation duration
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'duration', 'number', 1);
-
-        // leafAnimation delay
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'delay', 'number', 0);
-
-        // leafAnimation timing
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease');
-
-        // leafAnimation iterations
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1, ['infinite', 'initial', 'inherit']);
-
-        // leafAnimation fillMode
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards');
-
-        options.leafAnimation = new OC_CSSAnimation(
-            options.leafAnimation.keyframes,
-            options.leafAnimation.duration,
-            options.leafAnimation.delay,
-            options.leafAnimation.timing,
-            options.leafAnimation.iterations,
-            options.leafAnimation.fillMode,
-            this.getPrefixes(options));
-        
-        // ### optional attributes
-        // duration
-        OC_ArgumentParser.parseAttribute(options, 'options', 'duration', 'number', 1);
-
-        // delay
-        OC_ArgumentParser.parseAttribute(options, 'options', 'delay', 'number', 0);
-
-        // order
-        OC_ArgumentParser.parseAttribute(options, 'options', 'order', 'string', 'asc');
-        options.order = OC_ArgumentParser.hyphenToCamelCase(options.order);
-
-        // timing
-        OC_ArgumentParser.parseAttribute(options, 'options', 'timing', 'string', 'ease');
-        options.timing = OC_ArgumentParser.hyphenToCamelCase(options.timing);
-        options.timing = OCTiming.fromString(options.timing)
-
-        // callback
-        OC_ArgumentParser.parseAttribute(options, 'options', 'callback', 'function');
-
-        return options;
-    }
-
     getLeaveAnimationAsString(options) {
-        options = this.parseAnimationOptions(options);
+        options = OC_ArgumentParser.parseAnimationOptions(options);
         var cssString = '';
         for (var i = 0; i < this.leaves.length; i++) {
             const delay = options.leafAnimation.delay + OC_LeafOrder.orderFunctions[options.order](options, i, this.leaves.length);

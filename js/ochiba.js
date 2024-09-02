@@ -219,24 +219,18 @@ class OC {
     }
 
     initLetters(fixedSize) {
-        fixedSize = (fixedSize) ? 'display: inline-block' : '';
-        var letters = this.root.innerHTML.split('');
-        var htmlString = '';
-        for (var i = 0; i < letters.length; i++) {
-            var letter = letters[i];
-            var isLeaf = ' class="leaf"';
-            if (letter == ' ') {
-                letter = '&nbsp;';
-                isLeaf = '';
-            }
-            htmlString += '<span ' + isLeaf + ' style="' + fixedSize + '">' + letter + '</span>';
-        }
-        this.root.innerHTML = htmlString;
+        const style = fixedSize ? 'display: inline-block' : '';
+        const letters = this.root.innerHTML.split('');
+        this.root.innerHTML = letters.map(letter =>
+            letter === ' ' 
+                ? '<span style="' + style + '">&nbsp;</span>' 
+                : '<span class="leaf" style="' + style + '">' + letter + '</span>'
+        ).join('');
         this.leaves = this.root.getElementsByClassName('leaf');
     }
 
     getPrefixes(options) {
-        if (typeof options !== 'undefined' && 'enablePrefixes' in options && options.enablePrefixes) {
+        if ('enablePrefixes' in options && options.enablePrefixes) {
             return ['', '-webkit-', '-moz-', '-o-'];
         }
         return [''];

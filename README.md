@@ -121,19 +121,12 @@ seq.animate()
    - `'random'` (random order)
 - `timing` (string): The timing function for the overall animation.<br>
   Possible values:
-   - `'linear'` (no easing, no acceleration)
-   - `'ease-in-quad'` (accelerating from zero velocity)
-   - `'ease-out-quad'` (decelerating to zero velocity)
-   - `'ease-in-out-quad'` (acceleration until halfway, then deceleration)
-   - `'ease-in-cubic'` (accelerating from zero velocity)
-   - `'ease-out-cubic'` (decelerating to zero velocity)
-   - `'ease-in-out-cubic'` (acceleration until halfway, then deceleration)
-   - `'ease-in-quart'` (accelerating from zero velocity)
-   - `'ease-out-quart'` (decelerating to zero velocity)
-   - `'ease-in-out-quart'` (acceleration until halfway, then deceleration)
-   - `'ease-in-quint'` (accelerating from zero velocity)
-   - `'ease-out-quint'` (decelerating to zero velocity)
-   - `'ease-in-out-quint'` (acceleration until halfway, then deceleration)
+   - `'linear'` (constant speed)
+   - `'ease'` (slow start and end, fast in the middle)
+   - `'ease-in'` (slow start)
+   - `'ease-out'` (slow end)
+   - `'ease-in-out'` (slow start and end)
+   - `'cubic-bezier(n,n,n,n)'` (custom cubic-bezier function)
 - `leafAnimation` (Object): An object containing the specific animation applied to each child node.<br>
    Possible properties:
    - `keyframes` (string): The keyframes name that define the animation sequence.

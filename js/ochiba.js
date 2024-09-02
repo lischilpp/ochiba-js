@@ -1,10 +1,11 @@
 class OC_ArgumentParser {
-    
+
     static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
 
-    static parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue) {
+    static parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue, allowedValues) {
         if (attributeName in containingDict) {
             if (typeof containingDict[attributeName] !== attributeType) throw `${containingDictName}.${attributeName} must be of type ${attributeType}`; 
+            if (typeof allowedValues !== 'undefined' && !(containingDict[attributeName] in allowedValues)) throw `${containingDictName}.${attributeName} must be one of the following values: ${allowedValues.join(', ')}`; 
         } else if (typeof defaultValue === attributeType) {
             containingDict[attributeName] = defaultValue;
         }
@@ -270,8 +271,9 @@ class OC {
         // leafAnimation timing
         OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease');
 
-        // leafAnimation duration
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1);
+        // leafAnimation iterations
+        if (!('iterations' in options.leafAnimation && options.leafAnimation.iterations in ['infinite', 'initial', 'inherit']))
+            OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1);
 
         // leafAnimation fillMode
         OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards');

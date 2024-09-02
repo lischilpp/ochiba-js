@@ -35,7 +35,7 @@ const oc = new OC(elem);
 oc.animateLeaves({
     duration: 1,
     order: 'asc',
-    timing: 'linear',
+    timing: 'ease',
     leafAnimation: {
         duration: 1,
         timing: 'ease',
@@ -122,7 +122,7 @@ const oc = new OC(elem);
 oc.animateLeaves({
     duration: 1,
     order: 'out-mid',
-    timing: 'ease-out-cubic',
+    timing: 'ease-out',
     leafAnimation: {
         duration: 1,
         timing: 'linear',

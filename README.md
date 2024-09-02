@@ -30,6 +30,7 @@ The library is built with simplicity in mind, featuring a minimal file size and 
 - [<code>🤹 Animating child nodes</code>](#animating-child-nodes)
 - [<code>⛓️ Animating a chain of elements and their child nodes</code>](#animating-a-chain-of-elements-and-their-child-nodes)
 - [<code>⚙️ Animation Options</code>](#animation-options)
+- [<code>☑️ Features TODO</code>](#%EF%B8%8F-features-todo)
 - [<code>📝 License</code>](#-license)
 
 ## Animating child nodes
@@ -153,6 +154,16 @@ seq.animate()
      - `'forwards'` (styles are retained after the animation ends)
      - `'backwards'` (styles are applied from the first keyframe before the animation starts)
      - `'both'` (styles are retained both before and after the animation)
+
+## ☑️ Features TODO
+- [ ] Animation-timing-function steps, step-start, step-end for root level animation
+- [ ] Animation-fill-mode none, forwards, backwards, both for root level animation
+- [ ] Implementation of values "initial" and "inherit"
+- [ ] Check and make durations more exact
+- [ ] Check browser support for used language features
+- [ ] Add support for multiple animations
+- [ ] Add support for stopping and re-playing animations
+- [ ] Make syntax for methods of OC and OC_Sequence more similar
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

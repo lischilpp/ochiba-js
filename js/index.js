@@ -6,7 +6,7 @@ function init() {
 }
 
 function animateHeader() {
-    const seq = new OCSequence([
+    const seq = new OC_Sequence([
         [
             {
                 root: document.getElementById('headline'),

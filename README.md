@@ -176,6 +176,7 @@ seq.animate()
 - [ ] Add syntax highlighting to demo page code, e.g. using prismjs
 - [ ] Add GUI with dropdown menus to demo page (e.g. between code editor and load-demos list)
 - [ ] Create another demo that is not animating letters or list
+- [ ] Create an epic GIF collage with many different animations running on different elements at the same time for the Github Readme
 
 ## 📝 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

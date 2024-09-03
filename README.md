@@ -158,7 +158,7 @@ seq.animate()
      - `'both'` (styles are retained both before and after the animation)
 
 ## ☑️ Features TODO
-### Make root- and leaf-level animations as similar as possible
+### Make root- and leaf-level animations as similar as possible (like CSS animations)
 - [ ] Animation-timing-function steps, step-start, step-end for root level animation
 - [ ] Animation-fill-mode none, forwards, backwards, both for root level animation
 - [ ] Implementation of values "initial" and "inherit" for root level animations

@@ -167,7 +167,7 @@ seq.animate()
 - [ ] Check and make durations more exact
 (e.g. consider duration of leaf animation: when leaf animation takes 1s to complete and root animation has duration of 8s, the leaf animations should also be finished after 8s.)
 - [ ] Check browser support for used language features (e.g. arrow functions. This library should provide support for most common browser that are up to 5 years old.)
-- [ ] Group words somehow, that a line break wont't break words in the middle
+- [ ] Group words somehow, that a line break don't break words in the middle
 ### Other new features
 - [ ] Add support for stopping and re-playing animations
 - [ ] Add support for custom order functions (instead of passing things like "mid-out" a custom function can be passed)

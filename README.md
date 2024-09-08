@@ -6,7 +6,6 @@
 - Documentation may be incomplete
 - Use at your own risk
 - You can already try it out on this <a href="https://lischilpp.github.io/ochiba-js/">Interactive Page</a>
-- If you want to contribute, feel free to take a look at [<code>☑️ Features TODO</code>](#%EF%B8%8F-features-todo) and create a pull request
 
 # ochiba-js
 <p align="center"><img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400"></p>

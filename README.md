@@ -158,12 +158,12 @@ seq.animate()
 
 ## ☑️ Features TODO
 ### Make root- and leaf-level animations as similar as possible (like CSS animations)
-- [ ] Animation-timing-function steps, step-start, step-end for root level animation
+- [x] Animation-timing-function steps, step-start, step-end for root level animation
 - [ ] Animation-fill-mode none, forwards, backwards, both for root level animation
 - [ ] Implementation of values "initial" and "inherit" for root level animations
 - [ ] Add support for multiple animations (similar to e.g. animation: rotate 1s, spin 3s, but somehow implemented on both root and leaf level)
 ### Make the library more stable and correct
-- [ ] Check and make durations more exact
+- [x] Check and make durations more exact
 (e.g. consider duration of leaf animation: when leaf animation takes 1s to complete and root animation has duration of 8s, the leaf animations should also be finished after 8s.)
 - [ ] Check browser support for used language features (e.g. arrow functions. This library should provide support for most common browser that are up to 5 years old.)
 - [ ] Group words somehow, that a line break don't break words in the middle

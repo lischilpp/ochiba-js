@@ -1,6 +1,7 @@
 class OC_ArgumentParser {
 
     static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
+    static stepsFunctionRegex = /^steps\(\s*(\d+)\s*,\s*(start|end)\s*\)$/;
 
     static parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue, allowedValues, allowedPatterns) {
         if (attributeName in containingDict) {
@@ -79,7 +80,7 @@ class OC_ArgumentParser {
             ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'step-start', 'step-end'],
             [/steps\(\d+,(start|end)\)/, /cubic-bezier\(\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?\)/]);
         options.timing = OC_ArgumentParser.hyphenToCamelCase(options.timing);
-        options.timing = OCTiming.fromString(options.timing)
+        options.timing = OCTiming.fromString(options.timing, options.duration)
 
         // callback
         OC_ArgumentParser.parseAttribute(options, 'options', 'callback', 'function');
@@ -104,6 +105,15 @@ class OC_ArgumentParser {
         return OCTiming.cubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
     }
 
+    static isStepsFunctionSyntax(str) {
+        return OC_ArgumentParser.stepsFunctionRegex.test(str);
+    }
+
+    static getStepsFunctionFromString(str, duration) {
+        const match = OC_ArgumentParser.stepsFunctionRegex.exec(str);
+        return OCTiming.steps(parseInt(match[1]), match[2], duration);
+    }
+    
 }
 
 
@@ -120,6 +130,8 @@ class OCTiming {
         easeOut: OCTiming.cubicBezier(0, 0, 0.58, 1),
         // Ease-in-out - acceleration until halfway, then deceleration
         easeInOut: OCTiming.cubicBezier(0.42, 0, 0.58, 1),
+        // Steps - step function as in css animations
+        steps: OCTiming.steps,
     };
 
     static cubicBezier(p1y, p1x, p2y, p2x) {
@@ -161,14 +173,31 @@ class OCTiming {
         };
     }
 
-    static fromString(str) {
+    static steps(steps, pos, duration) {
+        // implement like css steps function
+        // should return a function that takes a progress value between 0 and 1
+        // and returns the progress value after the steps function
+        return function(t) {
+            if (pos === 'start') {
+                return Math.min(duration, Math.floor(t * steps)) / duration;
+            } else if (pos === 'end') {
+                return Math.floor(t * steps) / duration;
+            } else {
+                throw "Invalid position value. Expected 'start' or 'end'.";
+            }
+        }
+    }
+
+    static fromString(str, duration) {
         if (str in OCTiming.timingFunctions){
             return OCTiming.timingFunctions[str];
         } else {
             str = str.replace(/ /g,'') // remove spaces
             if (OC_ArgumentParser.isCubicBezierSyntax(str)) {
                 return OC_ArgumentParser.getCubicBezierFromString(str);
-            } else throw `"${str}" is not a valid timing value`;
+            } else if (OC_ArgumentParser.isStepsFunctionSyntax(str)) {
+                return OC_ArgumentParser.getStepsFunctionFromString(str, duration);
+            }else throw `"${str}" is not a valid timing value`;
         }
     }
 
@@ -209,11 +238,11 @@ class OC_LeafOrder {
     static orderFunctions = {
 
         asc: function(options, i, leaveCount) {
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, i / leaveCount);
+            return OC_LeafOrder.getDelayForTimestep(i / leaveCount, options);
         },
 
         desc: function(options, i, leaveCount) {
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, (leaveCount - i) / leaveCount);
+            return OC_LeafOrder.getDelayForTimestep((leaveCount - i) / leaveCount, options);
         },
 
         midOut: function(options, i, leaveCount) {
@@ -224,7 +253,7 @@ class OC_LeafOrder {
             } else {
                 t = (mid - i) / mid;
             }
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, t);
+            return OC_LeafOrder.getDelayForTimestep(t, options);
         },
 
         outMid: function(options, i, leaveCount) {
@@ -235,7 +264,7 @@ class OC_LeafOrder {
             } else {
                 t = (leaveCount - i) / (leaveCount - mid);
             }
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, t);
+            return OC_LeafOrder.getDelayForTimestep(t, options);
         },
 
         random: function(options, i, leaveCount) {
@@ -243,19 +272,19 @@ class OC_LeafOrder {
                 this.shuffled = OC_LeafOrder.intRange(0, leaveCount - 1);
                 OC_LeafOrder.shuffleArray(this.shuffled);
             }
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, this.shuffled[i] / leaveCount);
+            return OC_LeafOrder.getDelayForTimestep(this.shuffled[i] / leaveCount, options);
         },
 
         segmentsAsc: function(options, i, leaveCount) {
             const interval = Math.floor(leaveCount * 0.25);
             const index = i % interval;
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, index / interval);
+            return OC_LeafOrder.getDelayForTimestep(index / interval, options);
         },
 
         segmentsDesc: function(options, i, leaveCount) {
             const interval = Math.floor(leaveCount * 0.25);
             const index = i % interval;
-            return options.delay + OC_LeafOrder.getDelayForTiming(options.duration, options.timing, (interval - index) / interval);
+            return OC_LeafOrder.getDelayForTimestep((interval - index) / interval, options);
         }
     }
 
@@ -267,8 +296,9 @@ class OC_LeafOrder {
         array.sort(() => .5 - Math.random());
     }
 
-    static getDelayForTiming(duration, timingFunction, progres) {
-        return duration * timingFunction(progres);
+    static getDelayForTimestep(t, options) {
+        const lastActivateDelay = Math.max(0, options.duration - (options.leafAnimation.duration + options.leafAnimation.delay));
+        return options.delay + lastActivateDelay * options.timing(t)
     }
 }
 

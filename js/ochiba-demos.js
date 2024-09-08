@@ -31,7 +31,7 @@ const ochibaDemos = [
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-    duration: 1,
+    duration: 2,
     order: 'asc',
     timing: 'ease',
     leafAnimation: {
@@ -71,7 +71,7 @@ oc.animateLeaves({
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-    duration: 1,
+    duration: 2,
     order: 'mid-out',
     timing: 'linear',
     leafAnimation: {
@@ -116,7 +116,7 @@ h1 .leaf {
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
-    duration: 1,
+    duration: 2,
     order: 'out-mid',
     timing: 'ease-out',
     leafAnimation: {
@@ -170,7 +170,7 @@ h2 {
 `const elem = document.getElementById('list');
 const oc = new OC(elem);
 oc.animateLeaves({
-    duration: 1,
+    duration: 1.5,
     order: 'asc',
     timing: 'linear',
     fillMode: 'forwards',
@@ -213,16 +213,16 @@ h1 {
 `const elem = document.getElementById('h1');
 const oc = new OC(elem);
 oc.animateLeaves({
+    duration: 2,
     delay: 0,
     order: 'mid-out',
     timing: 'ease-in',
     leafAnimation: {
-        duration: 2,
+        duration: 1,
         delay: 0,
         timing: 'ease-in',
         keyframes: 'whirlwind',
     },
-    duration: 1
 });
     `
 }

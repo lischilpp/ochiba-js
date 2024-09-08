@@ -11,7 +11,7 @@ function animateHeader() {
             {
                 root: document.getElementById('headline'),
                 animationProps: {
-                    delay: 0.1,
+                    delay: 0,
                     order: 'asc',
                     timing: 'linear',
                     leafAnimation: {
@@ -20,7 +20,7 @@ function animateHeader() {
                         timing: 'ease',
                         keyframes: 'headline',
                     },
-                    duration: 1,
+                    duration: 2,
                 }
             }
         ],
@@ -36,7 +36,7 @@ function animateHeader() {
                     timing: 'ease',
                     keyframes: 'sub-headline',
                 },
-                duration: 1
+                duration: 2
             }
         }],
     ])

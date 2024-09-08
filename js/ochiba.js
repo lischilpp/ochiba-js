@@ -275,18 +275,6 @@ class OC_LeafOrder {
             }
             return OC_LeafOrder.getDelayForTimestep(this.shuffled[i] / leaveCount, options);
         },
-
-        segmentsAsc: function(options, i, leaveCount) {
-            const interval = Math.floor(leaveCount * 0.25);
-            const index = i % interval;
-            return OC_LeafOrder.getDelayForTimestep(index / interval, options);
-        },
-
-        segmentsDesc: function(options, i, leaveCount) {
-            const interval = Math.floor(leaveCount * 0.25);
-            const index = i % interval;
-            return OC_LeafOrder.getDelayForTimestep((interval - index) / interval, options);
-        }
     }
 
     static intRange(start, end) {

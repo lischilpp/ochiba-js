@@ -173,15 +173,13 @@ class OCTiming {
         };
     }
 
-    static steps(steps, pos, duration) {
-        // implement like css steps function
-        // should return a function that takes a progress value between 0 and 1
-        // and returns the progress value after the steps function
+    static steps(steps, pos) {
+        const stepLength = 1 / steps;
         return function(t) {
             if (pos === 'start') {
-                return Math.min(duration, Math.floor(t * steps)) / duration;
+                return Math.floor(t / stepLength) / steps;
             } else if (pos === 'end') {
-                return Math.floor(t * steps) / duration;
+                return Math.floor(t / stepLength - 1) / steps;
             } else {
                 throw "Invalid position value. Expected 'start' or 'end'.";
             }
@@ -222,8 +220,10 @@ class OC_CSSAnimation {
     }
 
     toStringWithModifiedDelay(delay) {
+        let duration = this.duration;
+        if (delay < 0) duration = 0;
         return this.getPrefixedStyle('animation',
-            `${this.keyframes} ${this.duration}s ${this.timing} ${delay}s ${this.iterations}`) +
+            `${this.keyframes} ${duration}s ${this.timing} ${delay}s ${this.iterations}`) +
             this.getPrefixedStyle('animation-fill-mode', this.fillMode);
     }
 

@@ -131,7 +131,8 @@ class OCTiming {
         // Ease-in-out - acceleration until halfway, then deceleration
         easeInOut: OCTiming.cubicBezier(0.42, 0, 0.58, 1),
         // Steps - step function as in css animations
-        steps: OCTiming.steps,
+        stepStart: OCTiming.steps(1, 'start'),
+        stepEnd: OCTiming.steps(1, 'end')
     };
 
     static cubicBezier(p1y, p1x, p2y, p2x) {

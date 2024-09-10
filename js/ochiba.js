@@ -1,122 +1,3 @@
-class OC_ArgumentParser {
-
-    static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
-    static stepsFunctionRegex = /^steps\(\s*(\d+)\s*,\s*(start|end)\s*\)$/;
-
-    static parseAttribute(containingDict, containingDictName, attributeName, attributeType, defaultValue, allowedValues, allowedPatterns) {
-        if (attributeName in containingDict) {
-            if (Array.isArray(allowedValues) && typeof containingDict[attributeName] == 'string') {
-                if (!allowedValues.includes(containingDict[attributeName])) {
-                    if (!Array.isArray(allowedPatterns))
-                        throw `${containingDictName}.${attributeName} must be one of the following values: ${allowedValues.join(', ')}`;
-                    else if (!allowedPatterns.some(p => p.test(containingDict[attributeName])))
-                        throw `${containingDictName}.${attributeName} must be one of the following values: ${allowedValues.join(', ')} or match one of the following patterns: ${allowedPatterns.join(', ')}`;
-                }
-                return;
-            }
-            if (typeof containingDict[attributeName] !== attributeType) throw `${containingDictName}.${attributeName} must be of type ${attributeType}`; 
-        } else if (typeof defaultValue === attributeType) {
-            containingDict[attributeName] = defaultValue;
-        }
-    }
-
-    static parseAnimationOptions(options) {
-        // ### required attributes
-        if (typeof options !== 'object') throw 'options are required'
-
-        // leafAnimation
-        // ###### required leafAnimation attributes
-        if (!('leafAnimation' in options)) throw 'leafAnimation is required';
-        
-        // leafAnimation duration
-        OC_ArgumentParser.parseAttribute(
-            options.leafAnimation, 'options.leafAnimation', 'duration', 'number', 1,
-            ['initial', 'inherit']);
-
-        // leafAnimation delay
-        OC_ArgumentParser.parseAttribute(
-            options.leafAnimation, 'options.leafAnimation', 'delay', 'number', 0,
-            ['initial', 'inherit']);
-
-        // leafAnimation timing
-        OC_ArgumentParser.parseAttribute(
-            options.leafAnimation, 'options.leafAnimation', 'timing', 'string', 'ease',
-            ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'step-start', 'step-end', 'initial', 'inherit'],
-            [/steps\(\d+,(start|end)\)/, /cubic-bezier\(\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?\)/]);
-
-        // leafAnimation iterations
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'iterations', 'number', 1, ['infinite', 'initial', 'inherit']);
-
-        // leafAnimation fillMode
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'fillMode', 'string', 'forwards',
-            ['none', 'forwards', 'backwards', 'both', 'initial', 'inherit']);
-
-        // prefixes
-        OC_ArgumentParser.parseAttribute(options.leafAnimation, 'options.leafAnimation', 'usePrefixes', 'boolean', false);
-
-        options.leafAnimation = new OC_CSSAnimation(
-            options.leafAnimation.keyframes,
-            options.leafAnimation.duration,
-            options.leafAnimation.delay,
-            options.leafAnimation.timing,
-            options.leafAnimation.iterations,
-            options.leafAnimation.fillMode,
-            options.leafAnimation.usePrefixes);
-        
-        // ### optional attributes
-        // duration
-        OC_ArgumentParser.parseAttribute(options, 'options', 'duration', 'number', 1);
-
-        // delay
-        OC_ArgumentParser.parseAttribute(options, 'options', 'delay', 'number', 0);
-
-        // order
-        OC_ArgumentParser.parseAttribute(options, 'options', 'order', 'string', 'asc',
-           Object.keys(OC_LeafOrder.orderFunctions).map(k => OC_ArgumentParser.camelCaseToHyphen(k)));
-        options.order = OC_ArgumentParser.hyphenToCamelCase(options.order);
-
-        // timing
-        OC_ArgumentParser.parseAttribute(options, 'options', 'timing', 'string', 'ease',
-            ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'step-start', 'step-end'],
-            [/steps\(\d+,(start|end)\)/, /cubic-bezier\(\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?\)/]);
-        options.timing = OC_ArgumentParser.hyphenToCamelCase(options.timing);
-        options.timing = OCTiming.fromString(options.timing, options.duration)
-
-        // callback
-        OC_ArgumentParser.parseAttribute(options, 'options', 'callback', 'function');
-
-        return options;
-    }
-
-    static hyphenToCamelCase(str) {
-        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-    }
-
-    static camelCaseToHyphen(str) {
-        return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    }
-
-    static isCubicBezierSyntax(str) {
-        return OC_ArgumentParser.cubicBezierRegex.test(str);
-    }
-
-    static getCubicBezierFromString(str) {
-        const match = OC_ArgumentParser.cubicBezierRegex.exec(str);
-        return OCTiming.cubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
-    }
-
-    static isStepsFunctionSyntax(str) {
-        return OC_ArgumentParser.stepsFunctionRegex.test(str);
-    }
-
-    static getStepsFunctionFromString(str, duration) {
-        const match = OC_ArgumentParser.stepsFunctionRegex.exec(str);
-        return OCTiming.steps(parseInt(match[1]), match[2], duration);
-    }
-    
-}
-
-
 class OCTiming {
 
     static timingFunctions = {
@@ -289,6 +170,174 @@ class OC_LeafOrder {
         const lastActivateDelay = Math.max(0, options.duration - (options.leafAnimation.duration + options.leafAnimation.delay));
         return options.delay + lastActivateDelay * options.timing(t)
     }
+}
+
+class OC_ArgumentParser {
+
+    static animationOptionParsers = [
+        {
+            attributeName: 'leafAnimation',
+            attributeType: 'object',
+            isRequired: true,
+            postProcessingFunction: function(options, _) {
+                options.leafAnimation = new OC_CSSAnimation(
+                    options.leafAnimation.keyframes,
+                    options.leafAnimation.duration,
+                    options.leafAnimation.delay,
+                    options.leafAnimation.timing,
+                    options.leafAnimation.iterations,
+                    options.leafAnimation.fillMode,
+                    options.leafAnimation.usePrefixes);
+            },
+            subParsers: [
+                {
+                    isRequired: true,
+                    attributeName: 'keyframes',
+                    attributeType: 'string'
+                },
+                {
+                    attributeName: 'duration',
+                    attributeType: 'number',
+                    defaultValue: 1
+                },
+                {
+                    attributeName: 'delay',
+                    attributeType: 'number',
+                    defaultValue: 0
+                },
+                {
+                    attributeName: 'timing',
+                    attributeType: 'string',
+                    defaultValue: 'ease',
+                    allowedValues: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'step-start', 'step-end'],
+                    allowedPatterns: [/steps\(\d+,(start|end)\)/, /cubic-bezier\(\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?\)/],
+                },
+                {
+                    attributeName: 'iterations',
+                    attributeType: 'number',
+                    defaultValue: 1,
+                    allowedValues: ['infinite'],
+                },
+                {
+                    attributeName: 'fillMode',
+                    attributeType: 'string',
+                    defaultValue: 'forwards',
+                    allowedValues: ['none', 'forwards', 'backwards', 'both'],
+                },
+                {
+                    attributeName: 'usePrefixes',
+                    attributeType: 'boolean',
+                    defaultValue: false,
+                }
+            ]
+        },
+        {
+            attributeName: 'duration',
+            attributeType: 'number',
+            defaultValue: 1
+        },
+        {
+            attributeName: 'delay',
+            attributeType: 'number',
+            defaultValue: 0
+        },
+        {
+            attributeName: 'order',
+            attributeType: 'string',
+            defaultValue: 'asc',
+            allowedValues: Object.keys(OC_LeafOrder.orderFunctions).map(k => OC_ArgumentParser.camelCaseToHyphen(k)),
+            postProcessingFunction: function(options, key) {
+                options[key] = OC_ArgumentParser.hyphenToCamelCase(options[key]);
+            }
+        },
+        {
+            attributeName: 'timing',
+            attributeType: 'string',
+            defaultValue: 'ease',
+            allowedValues: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'step-start', 'step-end'],
+            allowedPatterns: [/steps\(\d+,(start|end)\)/, /cubic-bezier\(\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?,\d+(\.\d+)?\)/],
+            postProcessingFunction: function(options, key) {
+                options[key] = OC_ArgumentParser.hyphenToCamelCase(options[key]);
+                options[key] = OCTiming.fromString(options[key], options.duration);
+            }
+        },
+        {
+            attributeName: 'callback',
+            attributeType: 'function',
+            defaultValue: () => {}
+        }
+    ];
+
+    static cubicBezierRegex = /^cubicBezier\(\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\s*\)$/;
+    static stepsFunctionRegex = /^steps\(\s*(\d+)\s*,\s*(start|end)\s*\)$/;
+
+    static parseAttribute(containingDict, containingDictName, parser) {
+        // check if attribute exists in containingDict
+        if (parser.attributeName in containingDict) {
+            // check if attribute has valid value
+            if (Array.isArray(parser.allowedValues) && typeof containingDict[parser.attributeName] == 'string') {
+                if (!parser.allowedValues.includes(containingDict[parser.attributeName])) {
+                    if (!Array.isArray(parser.allowedPatterns))
+                        throw `${containingDictName}.${parser.attributeName} must be one of the following values: ${parser.allowedValues.join(', ')}`;
+                    else if (!parser.allowedPatterns.some(p => p.test(containingDict[parser.attributeName])))
+                        throw `${containingDictName}.${parser.attributeName} must be one of the following values: ${parser.allowedValues.join(', ')} or match one of the following patterns: ${parser.allowedPatterns.join(', ')}`;
+                }
+            } else if (typeof containingDict[parser.attributeName] !== parser.attributeType) {
+                throw `${containingDictName}.${parser.attributeName} must be of type ${parser.attributeType}`;
+            }
+        } else if (typeof parser.defaultValue === parser.attributeType) {
+            // set default value
+            containingDict[parser.attributeName] = parser.defaultValue;
+        }
+        // parse subParsers
+        if (Array.isArray(parser.subParsers)) {
+            for (const subParser of parser.subParsers) {
+                OC_ArgumentParser.parseAttribute(containingDict[parser.attributeName], `${containingDictName}.${parser.attributeName}`, subParser);
+            }
+        }
+        // call post processing function
+        if (typeof parser.postProcessingFunction === 'function') {
+            parser.postProcessingFunction(containingDict, parser.attributeName);
+        }
+    }
+
+    static parseAnimationOptions(options) {
+        // ### required attributes
+        if (typeof options !== 'object') throw 'options are required'
+        
+        for (const parser of OC_ArgumentParser.animationOptionParsers) {
+            if (parser.isRequired && !(parser.attributeName in options)) throw `${parser.attributeName} is required`;
+            OC_ArgumentParser.parseAttribute(options, 'options', parser);
+        }
+        return options;
+    }
+
+    static hyphenToCamelCase(str) {
+        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+    }
+
+    static camelCaseToHyphen(str) {
+        return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
+
+    static isCubicBezierSyntax(str) {
+        return OC_ArgumentParser.cubicBezierRegex.test(str);
+    }
+
+    static getCubicBezierFromString(str) {
+        const match = OC_ArgumentParser.cubicBezierRegex.exec(str);
+        return OCTiming.cubicBezier(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
+    }
+
+    static isStepsFunctionSyntax(str) {
+        return OC_ArgumentParser.stepsFunctionRegex.test(str);
+    }
+
+    static getStepsFunctionFromString(str, duration) {
+        const match = OC_ArgumentParser.stepsFunctionRegex.exec(str);
+        return OCTiming.steps(parseInt(match[1]), match[2], duration);
+    }
+    
 }
 
 

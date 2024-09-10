@@ -159,8 +159,6 @@ seq.animate()
 ## ☑️ Features TODO
 ### Make root- and leaf-level animations as similar as possible (like CSS animations)
 - [x] Animation-timing-function steps, step-start, step-end for root level animation
-- [ ] Animation-fill-mode none, forwards, backwards, both for root level animation
-- [ ] Implementation of values "initial" and "inherit" for root level animations
 - [ ] Add support for multiple animations (similar to e.g. animation: rotate 1s, spin 3s, but somehow implemented on both root and leaf level)
 ### Make the library more stable and correct
 - [x] Check and make durations more exact
@@ -170,7 +168,6 @@ seq.animate()
 ### Other new features
 - [ ] Add support for stopping and re-playing animations
 - [ ] Add support for custom order functions (instead of passing things like "mid-out" a custom function can be passed)
-- [ ] Clearly state in documentation which features can be exported to CSS and which not
 ### Improve demos
 - [ ] Add syntax highlighting to demo page code, e.g. using prismjs
 - [ ] Add GUI with dropdown menus to demo page (e.g. between code editor and load-demos list)

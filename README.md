@@ -1,22 +1,18 @@
-## ⚠️ Development Notice
+<div align="center">
+  <h1>Ochiba JS</h1>
+  <p>
+    <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white" alt="HTML Badge">
+    <img src="https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white" alt="CSS Badge">
+    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript Badge">
+  </p>
+  <p>An animation library for child elements</p>
+  <p><a href="https://lischilpp.github.io/ochiba-js/">Live Demo</a></p>
+</div>
 
-**This repository is under active development and not ready for production yet.**
-
-- Features may change frequently
-- Documentation may be incomplete
-- Use at your own risk
-- You can already try it out on this <a href="https://lischilpp.github.io/ochiba-js/">Interactive Page</a>
-
-# ochiba-js
-<p align="center"><img src="res/demo-animation.gif" alt="Demo GIF showing OchibaJS in action" width="400"></p>
-<p align="center">
+## About The Project
 OchibaJS is a lightweight JavaScript library designed to simplify the animation of child elements,<br>
  making it easy to bring your web content to life.<br><br>
 The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
-</p>
-<p align="center">
-  <a href="https://lischilpp.github.io/ochiba-js/">Interactive Page</a>
-</p>
 
 ### Key Features
 
@@ -26,16 +22,18 @@ The library is built with simplicity in mind, featuring a minimal file size and 
 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
 
- ## 🗺️ Navigation 
-- [<code>📃 Description</code>](#ochiba-js)
-- [<code>🤹 Animating child nodes</code>](#animating-child-nodes)
-- [<code>⛓️ Animating a chain of elements and their child nodes</code>](#animating-a-chain-of-elements-and-their-child-nodes)
-- [<code>⚙️ Animation Options</code>](#animation-options)
-- [<code>☑️ Features TODO</code>](#%EF%B8%8F-features-todo)
-- [<code>📝 License</code>](#-license)
+<details>
+  <summary>Table of Contents</summary>
+  <ul>
+    <li><a href="#animating-child-nodes">🤹 Animating child nodes</a></li>
+    <!--<li><a href="#animating-a-chain-of-elements-and-their-child-nodes">⛓️ Animating a chain of elements and their child nodes</a></li>-->
+    <li><a href="#animation-options">⚙️ Animation Options</a></li>
+    <li><a href="#%EF%B8%8F-features-todo">☑️ Features TODO</a></li>
+    <li><a href="#-license">📝 License</a></li>
+  </ul>
+</details>
 
 ## Animating child nodes
-
 ### Example Usage
 
 ```javascript
@@ -78,6 +76,7 @@ Animates the child nodes of the specified HTML element using the provided option
 - `options` (Animation Options Object): An object containing animation configuration options.<br>
   See [<code>⚙️ Animation Options</code>](#animation-options) for details
 
+<!--
 ## Animating a chain of elements and their child nodes
 
 ### Example Usage
@@ -118,6 +117,7 @@ const seq = new OCSequence([
 ])
 seq.animate()
 ```
+-->
 
 ## Animation Options
 

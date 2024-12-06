@@ -175,4 +175,4 @@ seq.animate()
 - [ ] Create an epic GIF collage with many different animations running on different elements at the same time for the Github Readme
 
 ## 📝 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is distributed under the MIT License - see the [LICENSE](LICENSE) file for details

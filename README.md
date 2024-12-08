@@ -14,27 +14,36 @@ OchibaJS is a lightweight JavaScript library designed to simplify the animation 
  making it easy to bring your web content to life.<br><br>
 The library is built with simplicity in mind, featuring a minimal file size and no external dependencies.
 
-### Key Features
+## Table of Contents
+<ul>
+  <li><a href="#screenshots">Screenshots</a></li>
+  <li><a href="#features">Features</a></li>
+  <li>
+    <a href="#getting-started">Getting Started</a>
+    <ul>
+      <li><a href="#animating-child-nodes">Animating child nodes</li>
+      <li><a href="#animation-options">Animation options</li>
+      <!--<li><a href="#animating-a-chain-of-elements-and-their-child-nodes">⛓️ Animating a chain of elements and their child nodes</a></li>-->
+    </ul>
+  </li>
+  <li><a href="#roadmap">Roadmap</li>
+  <li><a href="#license">License</a></li>
+</ul>
 
+
+## Screenshots
+<img src="https://github.com/lischilpp/ochiba-js/blob/main/res/demo-screenshot.png?raw=true"  alt="Ochiba JS Project" width="400px">
+
+## Features
 - **Flexible Animation Control:** Easily specify the order in which elements animate—whether from first-to-last, from the middle, or in a custom sequence—while controlling key animation properties like duration, delay, and easing, allowing you to create complex animations with just a few lines of code.
 
 - **Text Splitting:** If your element contains text, OchibaJS can automatically split it into individual spans, allowing each letter or word to be animated independently.
 
 - **CSS Export:** The entire animation can be exported as CSS code, allowing you to use it without relying on JavaScript or including the OchibaJS library in your project.
 
-<details>
-  <summary>Table of Contents</summary>
-  <ul>
-    <li><a href="#animating-child-nodes">🤹 Animating child nodes</a></li>
-    <!--<li><a href="#animating-a-chain-of-elements-and-their-child-nodes">⛓️ Animating a chain of elements and their child nodes</a></li>-->
-    <li><a href="#animation-options">⚙️ Animation Options</a></li>
-    <li><a href="#%EF%B8%8F-features-todo">☑️ Features TODO</a></li>
-    <li><a href="#-license">📝 License</a></li>
-  </ul>
-</details>
-
-## Animating child nodes
-### Example Usage
+## Getting Started
+### Animating child nodes
+#### Example Usage
 
 ```javascript
 // Get the HTML element with ID 'h1'
@@ -56,22 +65,20 @@ oc.animateLeaves({
 });
 ```
 
-#### `new OC(element)`
+##### `new OC(element)`
 
 Initializes a new OchibaJS object.
 
-**Parameters:**
+##### Parameters
 
 - `element` (HTMLElement): The HTML element to which the animation will be applied. <br>
 This element can for instance be selected using `document.getElementById()` or `document.querySelector()`.
 
-#### Methods
+##### Methods
 
-##### `animateLeaves(options)`
+###### `animateLeaves(options)`
 
 Animates the child nodes of the specified HTML element using the provided options.
-
-**Parameters:**
 
 - `options` (Animation Options Object): An object containing animation configuration options.<br>
   See [<code>⚙️ Animation Options</code>](#animation-options) for details
@@ -119,7 +126,7 @@ seq.animate()
 ```
 -->
 
-## Animation Options
+### Animation Options
 
 - `duration` (number): The duration of the entire animation, in seconds.
 - `order` (string): The order in which the leaves will be animated.<br>
@@ -156,7 +163,7 @@ seq.animate()
      - `'backwards'` (styles are applied from the first keyframe before the animation starts)
      - `'both'` (styles are retained both before and after the animation)
 
-## ☑️ Features TODO
+## Roadmap
 ### Make root- and leaf-level animations as similar as possible (like CSS animations)
 - [x] Animation-timing-function steps, step-start, step-end for root level animation
 - [ ] Add support for multiple animations (similar to e.g. animation: rotate 1s, spin 3s, but somehow implemented on both root and leaf level)
@@ -174,5 +181,5 @@ seq.animate()
 - [ ] Create another demo that is not animating letters or list
 - [ ] Create an epic GIF collage with many different animations running on different elements at the same time for the Github Readme
 
-## 📝 License
+## License
 This project is distributed under the MIT License - see the [LICENSE](LICENSE) file for details
